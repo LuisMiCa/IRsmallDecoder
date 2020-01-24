@@ -25,7 +25,7 @@ This is a Library for receiving and decoding IR signals from remote controls. Pe
 * It uses error detection (when possible);
 * Low SRAM and Flash memory usage;
 * The decoding is done asynchronously, no timers required, so you can use them for other things;
-* No conflicts with Timer-related functionalities such as tone(), servos, analogWrite(), etc.;
+* No conflicts with timer-related functionalities such as tone(), servos, analogWrite(), etc.;
 * It uses one hardware (external) interrupt;
 * No hardware specific instructions are used.
 
@@ -36,7 +36,7 @@ This is a Library for receiving and decoding IR signals from remote controls. Pe
 * Sony SIRC 12, 15 and 20bits (individually or simultaneously)
 
 ## Supported Boards 
-Because no hardware specific instructions are used, it probably works all Arduino boards (and others, I'm not quite sure, I've only tested it thoroughly on an Arduino Uno and a Mega). If you have problems with this library on some board, please submit an issue here: https://github.com/LuisMiCa/IRSmallDecoder/issues  or [contact me](#contact-information).
+Because no hardware specific instructions are used, it probably works on all Arduino boards (and possibly others, I'm not quite sure, I've only tested it thoroughly on an Arduino Uno and a Mega). If you have problems with this library on some board, please submit an issue here: https://github.com/LuisMiCa/IRSmallDecoder/issues  or [contact me](#contact-information).
  
 ## Connecting the IR sensor
 The sensor's output must be connected to one of the Arduino's digital pin that is usable for interrupts and, also, it must work with the CHANGE mode if the intended protocol uses this mode. (One example of a board that does not have CHANGE mode on some of the interrupt pins is the Arduino 101; and one protocol that uses that mode is the [RC5](#speed)).
@@ -56,7 +56,7 @@ The sensor's output must be connected to one of the Arduino's digital pin that i
 
 <sup>(Source: https://www.arduino.cc/reference/en/language/functions/external-interrupts/attachinterrupt/)</sup>
 
-If you're not sure about how to connect the IR Sensor to the Arduino, go to: [Details about the sensor connection](#appendix-b---ir-sensor-connection-details) at the end of this document.
+If you're not sure about how to connect the IR Sensor to the Arduino, go to: [IR sensor connection details](#appendix-b---ir-sensor-connection-details) at the end of this document.
 
 ## Installing the the library
 - Navigate to the [Releases page](https://github.com/LuisMiCa/IRsmallDecoder/releases);
@@ -187,6 +187,8 @@ This library is licensed under the MIT license.
 See the LICENSE file for details.
 
 ---
+<div style="page-break-after: always;"></div>
+
 ## Appendix A - Details about this library
 ### Size
 The size of this library is, as the name implies, small (about 900 bytes on average, for the Arduino UNO board) and the memory usage is also reduced (around 30 bytes). Keep in mind that these values vary depending on the selected protocol and the board used.
@@ -335,7 +337,7 @@ Despite the fact that my main goals were functionality and small size, I believe
 
 
 Notes:
-- Signal duration is the effective signal duration, not the signal period.
+- Signal Duration is the effective signal duration, not the signal period.
 - Tested on an Arduino Uno @ 16MHz;
 - To get the number of the clock cycles used by an interruption, multiply the time (in μs) by 16;
 - The decoding is partially done while the signal is being received. When one signal is fully received, the final stage of the decoding is executed and that's when the interruption takes more time to run.
@@ -346,7 +348,7 @@ The decoding is done asynchronously, meaning it does not rely on a timer to rece
 
 Most of the protocols' Statechart Machines are implemented using _switch cases_, but I also use the "labels as values" GCC extension (AKA "computed gotos") to implement some of the more complex machines. It's not a C++ standard but it should work with all IDEs that use the GCC (like Arduino IDE). 
 
-If you have problems compiling any of the protocols that use the "labels as values" extension, please submit an issue here: <https://github.com/LuisMiCa/IRfastDecoder/issues>  or [contact me](#contact-information).
+If you have problems compiling any of the protocols that use the "labels as values" extension, please submit an issue here: <https://github.com/LuisMiCa/IRsmallDecoder/issues>  or [contact me](#contact-information).
  
 ### Unwanted initial repetition codes
 Remote control keys do not "bounce", but the remotes do tend to send more codes than we wish for, when we press a button. That's because, after a very short interval, they start to send repeat codes. To avoid those unwanted initial repetitions, this library ignores a few of those repetition codes before confirming that the button is really being held.
@@ -364,17 +366,19 @@ I can't say that it's simple to understand how the decoders work, some of the St
 In order to make this library compatible with most of the Arduino boards, I didn't include any hardware specific instructions, but I did use a programming technique in which it's assumed that the microcontroller's endianness is Litle-Endian. On some boards you may even get a warning related to this, but it should work anyway. 
 
 ---
+<div style="page-break-after: always;"></div>
+
 ## Appendix B - IR sensor connection details
 
 If you are using a simple IR Receiver module the pinout order will be, most likely, `Vout Gnd Vcc` like in the the following examples:
 
 | ![](extras/IRsensors/PIC12043S.jpg) | ![](extras/IRsensors/TSOP48xx.jpg) |
-|---------------------------|--------------------------|
+|-------------------------------------|------------------------------------|
 
 But beware, there are other IR Receivers with different pinouts, like these examples:
 
 | ![](extras/IRsensors/TSOP17xx.jpg) | ![](extras/IRsensors/SFH505A.jpg) |
-|--------------------------|-------------------------|
+|------------------------------------|-----------------------------------|
  
 <table> 
     <tbody> <tr>
@@ -393,8 +397,8 @@ The connection to the Arduino is very straightforward, just connect:
 - VCC to the Arduino's +5V or (+3.3V if you are using a board with lower operating voltage<sup>[2]</sup>);
 - GND to one of the Arduino's Ground connector.
  
-    <small>_[1] Go to [Connecting the IR sensor](#connecting-the-ir-sensor) for more information._  
-    _[2] Note that not all IR Sensors can operate at low voltages._ </small>
+    <sup>[1] Go to [Connecting the IR sensor](#connecting-the-ir-sensor) for more information.</sup>  
+    <sup>[2] Note that not all IR Sensors can operate at low voltages.</sup> 
  
 Nearly all IR Sensor's datashets recommend the usage of an RC filter (R1, C1) at the power input, but it's not really necessary, (it's meant to suppress power supply disturbances):
 

@@ -51,12 +51,12 @@
  *
  */
 
-#define LEADING_MARK  9000
-#define BIT_0_MARK    1125
-#define BIT_1_MARK    2550
-#define BIT_TOLERANCE ((BIT_1_MARK - BIT_0_MARK)/2)  //floor(712.5) = 712
-#define STOP_SPACE    5437       //5437.5 to be more precise
-#define REPETITION_P  60000
+#define LEADING_MARK    9000
+#define BIT_0_MARK      1125
+#define BIT_1_MARK      2550
+#define BIT_TOLERANCE   ((BIT_1_MARK - BIT_0_MARK)/2)  //floor(712.5) = 712
+#define STOP_SPACE_MIN  5437       //5437.5 to be more precise
+#define STOP_SPACE_MAX 27938       //27937.5 to be more precise
 
 
 void IRsmallDecoder::irISR() { //executed every time the IR signal goes UP (but FALLING @SensorOutput)
@@ -67,16 +67,21 @@ void IRsmallDecoder::irISR() { //executed every time the IR signal goes UP (but 
   const uint16_t c_M1min = BIT_1_MARK - BIT_TOLERANCE; //2550-712=1838
   const uint16_t c_M0max = BIT_0_MARK + BIT_TOLERANCE; //1125+712=1837
   const uint16_t c_M0min = BIT_0_MARK - BIT_TOLERANCE; //1125-712= 413
-  const uint16_t c_GapMin= STOP_SPACE - BIT_TOLERANCE; //5437-712=4725
-  
+  const uint16_t c_GapMin = STOP_SPACE_MIN - BIT_1_MARK; //tolerance=BIT_1_MARK
+  const uint16_t c_GapMax = STOP_SPACE_MAX + BIT_1_MARK; //tolerance=BIT_1_MARK
+  //number of initial repeats to be ignored:
+  const uint8_t c_RptCount = 3;    
+   
   // FSM variables:
   static uint32_t duration;
   static uint8_t  bitCount;
   static uint32_t startTime = -1; //FFFF...  (by two's complement)
   static uint8_t  signal_Cmd;
   static uint16_t signal_Addr16;
-
-  static uint8_t state=0;
+  static uint8_t  state=0;
+  
+  static uint8_t repeatCount=0;
+  static bool    possiblyHeld=false;
 
 
   DBG_PRINT_STATE(state);
@@ -90,16 +95,15 @@ void IRsmallDecoder::irISR() { //executed every time the IR signal goes UP (but 
   switch(state){ //asynchronous (event-driven) Finite State Machine
     case 0: //standby:
       if(duration > c_GapMin){
-        //if (duration > c_GapMax) possiblyHeld = false;
+        if (duration > c_GapMax) possiblyHeld = false;
         state=1;
       }
-      //else possiblyHeld = false;
+      else possiblyHeld = false;
     break;
  
     case 1: //startPulse:
       if (duration >= c_LMmin && duration <= c_LMmax){ //its a Leading Mark
         bitCount=0;
-        //repeatCount=0;
         state=2;
       }
       else state=0;
@@ -112,19 +116,36 @@ void IRsmallDecoder::irISR() { //executed every time the IR signal goes UP (but 
         if(duration >= c_M1min) signal_Cmd |= 0x80; //it's M1, change MSB to 1
         bitCount++;
         if (bitCount==8) {
+          DBG_PRINT_STATE("a");
           signal_Addr16 = signal_Cmd;       // set address low byte
           //state=2;                        //stay in same state
         }
         else if (bitCount==12) {
+          DBG_PRINT_STATE("b");
           signal_Cmd >>= 4;                 // Push 4 '0' bits to the right
           signal_Addr16 |= signal_Cmd << 8; //set address high byte
           //state=2;                        //stay in same state
         }
-        else if (bitCount==20) {            //all bits received, ready to copy data
-          _irData.addr = signal_Addr16;
-          _irData.cmd  = signal_Cmd;
-          _irData.keyHeld = false;
-          _irDataAvailable= true;
+        else if (bitCount==20) {            //all bits received,
+          DBG_PRINT_STATE("c");
+          if (possiblyHeld && signal_Cmd == _irData.cmd){ //keyHeld confirmed (addr shouldn't have changed)
+            DBG_PRINT_STATE("d");
+            DBG_PRINT_STATE(repeatCount);
+            if (repeatCount < c_RptCount) repeatCount++; //first repeat signals will be ignored
+            else if (!_irCopyingData){ //repetitions ignored; if not interrupting a copy...
+              DBG_PRINT_STATE("e");
+              _irData.keyHeld = true;
+              _irDataAvailable= true;
+            }
+          }
+          else if (!_irCopyingData){ //key was not held; if allowed, update data
+            _irData.addr = signal_Addr16;
+            _irData.cmd  = signal_Cmd;
+            _irData.keyHeld = false;
+            _irDataAvailable= true;
+            possiblyHeld=true; //will remain true if the next gap is OK
+            repeatCount=0;
+          } 
           state=0;                          //done
         }
         //else state=2;                     //stay in same state

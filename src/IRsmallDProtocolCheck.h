@@ -47,7 +47,12 @@
       #undef  IR_SMALLD_SIRC
       #define IR_SMALLD_SIRC 1
   #endif
-   
+
+  #ifdef      IR_SMALLD_SAMSUNG
+      #undef  IR_SMALLD_SAMSUNG
+      #define IR_SMALLD_SAMSUNG 1
+  #endif
+  
   #define IR_SMALLD_CHECSUM \
       ( IR_SMALLD_NEC       \
       + IR_SMALLD_NECx      \
@@ -55,7 +60,8 @@
       + IR_SMALLD_SIRC12    \
       + IR_SMALLD_SIRC15    \
       + IR_SMALLD_SIRC20    \
-      + IR_SMALLD_SIRC	 )
+      + IR_SMALLD_SIRC	    \
+      + IR_SMALLD_SAMSUNG   )
 
   //if IR_SMALLD_CHECSUM == 1 then it's OK (there's one and only one #define...)
 

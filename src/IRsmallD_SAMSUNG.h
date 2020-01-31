@@ -15,7 +15,8 @@
  * Repetition Period:   60000 µs
  * Signal length : from 32062.5  up to  54562.5 µs  ( = 2*4500 + 20*[1125 to 2250]+ 562.5 ) 
  * Stop Space Length:   27937.5 down to  5437.5 µs  ( = Repetition Period - Signal length)
- * Frames per key pressed: 2 (the message is always sent, at least, twice) - decoder will ignore it or use option ????? 
+ * Frames per key pressed: 2 (the message is always sent, at least, twice). 
+ *                         Decoder will ignore it. Not all remotes have this characteristic.         
  * Repetition Mode:        Exact Copy (not a NEC type repetition frame)
  * Bit order:              LSB first
  * Number of bits:         20 (12 for manufacturer code + 8 for command)
@@ -27,29 +28,8 @@
  *   https://www.mikrocontroller.net/attachment/55409/samsungRCProtokoll.pdf (page 5-30)
  *   https://www.handsontec.com/pdf_files/IR_Code_Analy.pdf
  *
- *
- *
- * SAMSUNG32 Protocol specifications:
- * ----------------------------------
- * Encoding type: Pulse Distance
- * Carrier frequency:    37.9 kHz
- * Leading Mark length:  9000 µs (=4500µs pulse + 4500µs space)
- * Bit '0' Mark length:  1125 µs (=562.5µs pulse + 562.5µs space) 
- * Bit '1' Mark length:  2250 µs (=562.5µs pulse + 1687.5µs space)
- *
- * Repetition Period: 108000 µs
- * Signal length :     54562.5  up to  72562.5 µs  ( = 2*4500 + 2*8*[1125 to 2250] + 8*(1125 + 2250) + 562.5 )
- * Stop Space Length:  53437.5 down to 35437.5 µs  ( = Repetition Period - Signal length)
- * Frames per key pressed: 1
- * Repetition Mode: Exact Copy
- * Number of bits: 16 (not counting the addr repetition and the cmd complement)
- * Logical bits' order of transmission:
- *      8 bit Address            same 8 bit Address           8 bit Command             Command Complement
- *  A0 A1 A2 A3 A4 A5 A6 A7    A0 A1 A2 A3 A4 A5 A6 A7    C0 C1 C2 C3 C4 C5 C6 C7    ~C0~C1~C2~C3~C4~C5~C6~C7  
- *
- * (Source: http://elektrolab.wz.cz/katalog/samsung_protocol.pdf)
- *
  */
+
 
 #define LEADING_MARK    9000
 #define BIT_0_MARK      1125
@@ -69,20 +49,17 @@ void IRsmallDecoder::irISR() { //executed every time the IR signal goes UP (but 
   const uint16_t c_M0min = BIT_0_MARK - BIT_TOLERANCE; //1125-712= 413
   const uint16_t c_GapMin = STOP_SPACE_MIN - BIT_1_MARK; //tolerance=BIT_1_MARK
   const uint16_t c_GapMax = STOP_SPACE_MAX + BIT_1_MARK; //tolerance=BIT_1_MARK
-  //number of initial repeats to be ignored:
-  const uint8_t c_RptCount = 3;    
+  const uint8_t c_RptCount = 3;   //number of initial repeats to be ignored
    
   // FSM variables:
   static uint32_t duration;
   static uint8_t  bitCount;
   static uint32_t startTime = -1; //FFFF...  (by two's complement)
-  static uint8_t  signal_Cmd;
+  static uint8_t  signal_Cmd;  //starts as an auxiliary Byte for address decoding
   static uint16_t signal_Addr16;
   static uint8_t  state=0;
-  
-  static uint8_t repeatCount=0;
-  static bool    possiblyHeld=false;
-
+  static uint8_t  repeatCount=0;
+  static bool     possiblyHeld=false;
 
   DBG_PRINT_STATE(state);
   DBG_RESTART_TIMER();
@@ -90,7 +67,6 @@ void IRsmallDecoder::irISR() { //executed every time the IR signal goes UP (but 
   duration = micros() - startTime;
   startTime = micros();
   DBG_PRINTLN_DUR(duration);
-
 
   switch(state){ //asynchronous (event-driven) Finite State Machine
     case 0: //standby:
@@ -113,27 +89,17 @@ void IRsmallDecoder::irISR() { //executed every time the IR signal goes UP (but 
       if(duration < c_M0min || duration > c_M1max) state=0; //error, not a bit mark
       else { // it's M0 or M1
         signal_Cmd >>= 1;   //push a 0 from left to right (will be left at 0 if it's M0)
-        if(duration >= c_M1min) signal_Cmd |= 0x80; //it's M1, change MSB to 1
+        if(duration >= c_M1min) signal_Cmd |= 0x80;  //it's M1, change MSB to 1
         bitCount++;
-        if (bitCount==8) {
-          DBG_PRINT_STATE("a");
-          signal_Addr16 = signal_Cmd;       // set address low byte
-          //state=2;                        //stay in same state
-        }
+        if (bitCount==8) signal_Addr16 = signal_Cmd; //set address low byte (and stay in same state)
         else if (bitCount==12) {
-          DBG_PRINT_STATE("b");
-          signal_Cmd >>= 4;                 // Push 4 '0' bits to the right
-          signal_Addr16 |= signal_Cmd << 8; //set address high byte
-          //state=2;                        //stay in same state
+          signal_Cmd >>= 4;                  // Push 4 '0' bits to the right
+          signal_Addr16 |= signal_Cmd << 8;  //set address high byte  (and stay in same state)
         }
-        else if (bitCount==20) {            //all bits received,
-          DBG_PRINT_STATE("c");
+        else if (bitCount==20) {             //all bits received,
           if (possiblyHeld && signal_Cmd == _irData.cmd){ //keyHeld confirmed (addr shouldn't have changed)
-            DBG_PRINT_STATE("d");
-            DBG_PRINT_STATE(repeatCount);
-            if (repeatCount < c_RptCount) repeatCount++; //first repeat signals will be ignored
-            else if (!_irCopyingData){ //repetitions ignored; if not interrupting a copy...
-              DBG_PRINT_STATE("e");
+            if (repeatCount < c_RptCount) repeatCount++;  //first repeat signals will be ignored
+            else if (!_irCopyingData){   //repetitions ignored; if not interrupting a copy...
               _irData.keyHeld = true;
               _irDataAvailable= true;
             }
@@ -143,12 +109,12 @@ void IRsmallDecoder::irISR() { //executed every time the IR signal goes UP (but 
             _irData.cmd  = signal_Cmd;
             _irData.keyHeld = false;
             _irDataAvailable= true;
-            possiblyHeld=true; //will remain true if the next gap is OK
+            possiblyHeld=true;       //will remain true if the next gap is OK
             repeatCount=0;
           } 
-          state=0;                          //done
-        }
-        //else state=2;                     //stay in same state
+          state=0;                   //done
+        }   
+        //else state=2;              //stay in same state
       }
     break;
   }
@@ -157,32 +123,15 @@ void IRsmallDecoder::irISR() { //executed every time the IR signal goes UP (but 
 }
 
 
-
 /*
-SAMSUNG Standard protocol:
---------------------------
-  bits in order of transmission: A0 A1 A2 A3 A4 A5 A6 A7   A8 A9 Aa Ab   C0 C1 C2 C3 C4 C5 C6 C7
-  Inverted, padded and separated into bytes (of a uint32_t type):
-          8 bit Command            Address High Byte         Address Low Byte          unused             
-     C7 C6 C5 C4 C3 C2 C1 C0    0  0  0  0 Ab Aa A9 A8    A7 A6 A5 A4 A3 A2 A1 A0   0 0 0 0 0 0 0 0 
+bits in order of transmission: A0 A1 A2 A3 A4 A5 A6 A7  A8 A9 Aa Ab  C0 C1 C2 C3 C4 C5 C6 C7
  
- OR, 
- 
-  Decoding process using command byte as an auxiliary byte to decode the address
+Decoding process using command byte as an auxiliary byte to decode the address:
   Store A0 to A7 in signal_Cmd:        A7 A6 A5 A4 A3 A2 A1 A0
   set address low byte to signal_Cmd:  signal_Addr16 = signal_Cmd
   Store A8 to Ab in signal_Cmd:        Ab Aa A9 A8 A7 A6 A5 A4
   Push 4 '0' bits to the right:         0  0  0  0 Ab Aa A9 A8
   set address high byte to signal_Cmd: signal_Addr16 |= signal_Cmd << 8
   Store C0 to C7 in signal_Cmd:        C7 C6 C5 C4 C3 C2 C1 C0
- 
- 
- 
-SAMSUNG32 protocol: 
--------------------
-  bits in order of transmission: A0 A1 A2 A3 A4 A5 A6 A7   A0 A1 A2 A3 A4 A5 A6 A7   C0 C1 C2 C3 C4 C5 C6 C7  ~C0~C1~C2~C3~C4~C5~C6~C7
-  Inverted and separated into bytes:
-          8 bit Command          Command Complement        8 bit Address repeated        Address Low Byte                       
-     C7 C6 C5 C4 C3 C2 C1 C0   ~C7~C6~C5~C4~C3~C2~C1~C0    A7 A6 A5 A4 A3 A2 A1 A0    A7 A6 A5 A4 A3 A2 A1 A0
- 
+  
  */

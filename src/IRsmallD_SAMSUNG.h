@@ -1,11 +1,11 @@
-/* IRsmallD_SAMSUNG - SAMSUNG Standard protocol decoder
+/* IRsmallD_SAMSUNG - SAMSUNG old standard protocol decoder
  *
  * This file is part of the IRsmallDecoder library for Arduino
  * Copyright (c) 2020 Luis Carvalho
  *
  *
- * SAMSUNG standard format
- * -----------------------
+ * Protocol specifications:
+ * ------------------------
  * Encoding type: Pulse Distance
  * Carrier frequency:    37.9 kHz
  * Leading Mark length:  9000 µs (=4500µs pulse + 4500µs space)
@@ -15,8 +15,8 @@
  * Repetition Period:   60000 µs
  * Signal length : from 32062.5  up to  54562.5 µs  ( = 2*4500 + 20*[1125 to 2250]+ 562.5 ) 
  * Stop Space Length:   27937.5 down to  5437.5 µs  ( = Repetition Period - Signal length)
- * Frames per key pressed: 2 (the message is always sent, at least, twice). 
- *                         Decoder will ignore it. Not all remotes have this characteristic.         
+ * Frames per key pressed: 2 (the message is always sent, at least, twice). Decoder will ignore it!
+ *                         Repetitions not used for error checking. Not all remotes have this characteristic.         
  * Repetition Mode:        Exact Copy (not a NEC type repetition frame)
  * Bit order:              LSB first
  * Number of bits:         20 (12 for manufacturer code + 8 for command)
@@ -30,26 +30,28 @@
  *
  */
 
-
+// SAMSUNG Standard timing in micro seconds:
 #define LEADING_MARK    9000
 #define BIT_0_MARK      1125
 #define BIT_1_MARK      2550
-#define BIT_TOLERANCE   ((BIT_1_MARK - BIT_0_MARK)/2)  //floor(712.5) = 712
+#define BIT_TOLERANCE   ((BIT_1_MARK - BIT_0_MARK)/2)  // = 712
 #define STOP_SPACE_MIN  5437       //5437.5 to be more precise
 #define STOP_SPACE_MAX 27938       //27937.5 to be more precise
 
 
 void IRsmallDecoder::irISR() { //executed every time the IR signal goes UP (but FALLING @SensorOutput)
-  // SAMSUNG timing thresholds in micro seconds:
+  // SAMSUNG timing thresholds:
   const uint16_t c_LMmax = LEADING_MARK * 1.1; // 10% more = 9900
   const uint16_t c_LMmin = LEADING_MARK * 0.9; // 10% less = 8100
   const uint16_t c_M1max = BIT_1_MARK + BIT_TOLERANCE; //2550+712=3262
   const uint16_t c_M1min = BIT_1_MARK - BIT_TOLERANCE; //2550-712=1838
-  const uint16_t c_M0max = BIT_0_MARK + BIT_TOLERANCE; //1125+712=1837
-  const uint16_t c_M0min = BIT_0_MARK - BIT_TOLERANCE; //1125-712= 413
-  const uint16_t c_GapMin = STOP_SPACE_MIN - BIT_1_MARK; //tolerance=BIT_1_MARK
-  const uint16_t c_GapMax = STOP_SPACE_MAX + BIT_1_MARK; //tolerance=BIT_1_MARK
-  const uint8_t c_RptCount = 3;   //number of initial repeats to be ignored
+  //const uint16_t c_M0max = BIT_0_MARK + BIT_TOLERANCE; //1125+712=1837  //NOT USED
+  const uint16_t c_M0min = BIT_0_MARK - BIT_TOLERANCE; //1125-712= 413  
+  const uint32_t c_GapMax = STOP_SPACE_MAX + 6 * BIT_TOLERANCE;  // bigger tolerance
+  const uint16_t c_GapMin = STOP_SPACE_MIN - 6 * BIT_TOLERANCE;  // 6*712 = 4272
+  
+  //number of initial repeats to be ignored:
+  const uint8_t c_RptCount = 3;   
    
   // FSM variables:
   static uint32_t duration;

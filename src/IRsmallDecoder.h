@@ -16,6 +16,7 @@
  *    #define IR_SMALLD_SIRC20
  *    #define IR_SMALLD_SIRC
  *    #define IR_SMALLD_SAMSUNG
+ *    #define IR_SMALLD_SAMSUNG32
  *    
  *   before the
  *    #include <IRsmallDecoder.h>
@@ -42,7 +43,7 @@
 #include "IRsmallDDebug.h"
 
 // IR_ISR_MODE *****************************************************************
-#if IR_SMALLD_NEC || IR_SMALLD_NECx || IR_SMALLD_SAMSUNG
+#if IR_SMALLD_NEC || IR_SMALLD_NECx || IR_SMALLD_SAMSUNG || IR_SMALLD_SAMSUNG32
   #define IR_ISR_MODE  FALLING
 #elif IR_SMALLD_SIRC || IR_SMALLD_SIRC12 || IR_SMALLD_SIRC15 || IR_SMALLD_SIRC20
   #define IR_ISR_MODE  RISING
@@ -108,6 +109,8 @@ bool IRsmallDecoder::dataAvailable(irSmallD_t &irData){
   #include "IRsmallD_SIRC_multi.h"
 #elif IR_SMALLD_SAMSUNG
   #include "IRsmallD_SAMSUNG.h"
+#elif IR_SMALLD_SAMSUNG32
+  #include "IRsmallD_SAMSUNG32.h"
 #else
   #error ISR implementation not included.
 #endif

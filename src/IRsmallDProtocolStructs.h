@@ -7,7 +7,7 @@
 #ifndef IRsmallD_ProtocolStructs_h
 #define IRsmallD_ProtocolStructs_h
 
-  #if IR_SMALLD_NEC || IR_SMALLD_RC5
+  #if IR_SMALLD_NEC || IR_SMALLD_RC5 || IR_SMALLD_SAMSUNG32
     struct irSmallD_t{
       uint8_t addr;
       uint8_t cmd;

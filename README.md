@@ -34,6 +34,8 @@ This is a Library for receiving and decoding IR signals from remote controls. Pe
 * NECx
 * Philips RC5 and RC5x (simultaneously)
 * Sony SIRC 12, 15 and 20bits (individually or simultaneously)
+* SAMSUNG old standard
+* SAMSUNG 32 bits (16 of which are for error detection)
 
 ## Supported Boards 
 Because no hardware specific instructions are used, it probably works on all Arduino boards (and possibly others, I'm not quite sure, I've only tested it thoroughly on an Arduino Uno and a Mega). If you have problems with this library on some board, please submit an issue here: https://github.com/LuisMiCa/IRSmallDecoder/issues  or [contact me](#contact-information).
@@ -74,6 +76,8 @@ In the INO file, **one** of the following directives must be used:
 #define IR_SMALLD_SIRC15
 #define IR_SMALLD_SIRC20
 #define IR_SMALLD_SIRC
+#define IR_SMALLD_SAMSUNG
+#define IR_SMALLD_SAMSUNG32
 ```  
 
 before the
@@ -138,15 +142,17 @@ The SIRC protocol has the **ext** variable which holds extended data.
 
 The following table shows the number of bits used by each protocol and the datatypes of the data structure member variables:
 
-| Protocol | keyHeld |     cmd    |    addr     |    ext     |
-|----------|:-------:|:----------:|:-----------:|:----------:|
-| NEC      |   bool  |  8/uint8_t |  8/uint8_t  |     --     |
-| NECx     |   bool  |  8/uint8_t | 16/uint16_t |     --     |
-| RC5      |   bool  |  7/uint8_t |  5/uint8_t  |     --     |
-| SIRC12   |   --    |  7/uint8_t |  5/uint8_t  |     --     |
-| SIRC15   |   --    |  7/uint8_t |  8/uint8_t  |     --     |
-| SIRC20   |   --    |  7/uint8_t |  5/uint8_t  |  8/uint8_t |
-| SIRC     |   bool  |  7/uint8_t |  8/uint8_t  |  8/uint8_t |
+| Protocol  | keyHeld |     cmd    |    addr     |    ext     |
+|-----------|:-------:|:----------:|:-----------:|:----------:|
+| NEC       |   bool  |  8/uint8_t |  8/uint8_t  |     --     |
+| NECx      |   bool  |  8/uint8_t | 16/uint16_t |     --     |
+| RC5       |   bool  |  7/uint8_t |  5/uint8_t  |     --     |
+| SIRC12    |   --    |  7/uint8_t |  5/uint8_t  |     --     |
+| SIRC15    |   --    |  7/uint8_t |  8/uint8_t  |     --     |
+| SIRC20    |   --    |  7/uint8_t |  5/uint8_t  |  8/uint8_t |
+| SIRC      |   bool  |  7/uint8_t |  8/uint8_t  |  8/uint8_t |
+| SAMSUNG   |   bool  |  8/uint8_t | 12/uint16_t |     --     |
+| SAMSUNG32 |   bool  |  8/uint8_t |  8/uint8_t  |     --     |
 
 ### Notes
 - Only one protocol can be compiled at a time, however:   
@@ -195,15 +201,17 @@ The size of this library is, as the name implies, small (about 900 bytes on aver
 
 **Program memory and static data used (in SRAM) on an Arduino UNO (in bytes):**
 
-| Protocol | Program memory | Static data |
-|----------|:--------------:|:-----------:|
-| NEC      |      858       |     28      |
-| NECx     |      854       |     30      |
-| RC5      |     1062       |     31      |
-| SIRC12   |      706       |     22      |
-| SIRC15   |      682       |     22      |
-| SIRC20   |      764       |     26      |
-| SIRC     |     1262       |     37      |
+| Protocol  | Program memory | Static data |
+|-----------|:--------------:|:-----------:|
+| NEC       |      858       |     28      |
+| NECx      |      854       |     30      |
+| RC5       |     1062       |     31      |
+| SIRC12    |      706       |     22      |
+| SIRC15    |      682       |     22      |
+| SIRC20    |      764       |     26      |
+| SIRC      |     1262       |     37      |
+| SAMSUNG   |      880       |     29      |
+| SAMSUNG32 |      852       |     29      |
 
 To keep track of the sizes of this library, I used the ToggleLED example as a reference to determine the actual sizes, by compiling a version without the IRsmallDecoder and comparing it to the full version, for each of the supported protocols.
 
@@ -211,7 +219,7 @@ To keep track of the sizes of this library, I used the ToggleLED example as a re
 <thead>
 <tr>
 <th>Reference sketch</th>
-<th>ToggleLED sketch</th>
+<th>ToggleLED with NEC sketch</th>
 </tr>
 </thead>
 <tbody>
@@ -233,6 +241,10 @@ void loop() {
     digitalWrite(LED_BUILTIN, ledState);
 //  }
 }
+
+// On Arduino UNO,
+// Sketch uses 766 bytes
+// Global variables use 11 bytes
 ```
 </td>
 <td>
@@ -252,6 +264,10 @@ void loop() {
     digitalWrite(LED_BUILTIN, ledState);
   }
 }
+
+// On Arduino UNO, with NEC protocol,
+// Sketch uses 1624 bytes
+// Global variables use 39 bytes
 ```
 </td>
 </tr>
@@ -279,39 +295,39 @@ Despite the fact that my main goals were functionality and small size, I believe
 	<tr>
 		<td>NEC</td>
 		<td>FALLING</td>
-		<td>11,9 &#181;s</td>
+		<td>11.9 &#181;s</td>
 		<td>14 &#181;s</td>
 		<td>34</td>
-		<td>67,5ms</td>
+		<td>67.5ms</td>
 	</tr>
 	<tr>
 		<td>NECx</td>
 		<td>FALLING</td>
-		<td>11,4 &#181;s</td>
+		<td>11.4 &#181;s</td>
 		<td>14 &#181;s</td>
 		<td>34</td>
-		<td>67,5ms</td>
+		<td>67.5ms</td>
 	</tr>
 	<tr>
 		<td>RC5</td>
 		<td>CHANGE</td>
-		<td>10,4 &#181;s</td>
+		<td>10.4 &#181;s</td>
 		<td>17 &#181;s</td>
 		<td>14 to 28</td>
-		<td>24,9ms</td>
+		<td>24.9ms</td>
 	</tr>
 	<tr>
 		<td>SIRC12</td>
 		<td>RISING</td>
-		<td>11,0 &#181;s</td>
+		<td>11.0 &#181;s</td>
 		<td>13 &#181;s</td>
 		<td>3*13</td>
-		<td>3*(17,4 to 24,6)ms</td>
+		<td>3*(17.4 to 24.6)ms</td>
 	</tr>
 	<tr>
 		<td>SIRC15</td>
 		<td>RISING</td>
-		<td>10,9 &#181;s</td>
+		<td>10.9 &#181;s</td>
 		<td>12 &#181;s</td>
 		<td>3*16</td>
 		<td>3*(21 to 30)ms</td>
@@ -319,7 +335,7 @@ Despite the fact that my main goals were functionality and small size, I believe
 	<tr>
 		<td>SIRC20</td>
 		<td>RISING</td>
-		<td>11,1 &#181;s</td>
+		<td>11.1 &#181;s</td>
 		<td>15 &#181;s</td>
 		<td>3*21</td>
 		<td>3*(27 to 39)ms</td>
@@ -327,10 +343,26 @@ Despite the fact that my main goals were functionality and small size, I believe
 	<tr>
 		<td>SIRC</td>
 		<td>RISING</td>
-		<td>11,7 &#181;s</td>
+		<td>11.7 &#181;s</td>
 		<td>17 &#181;s</td>
 		<td>39, 48 or 63</td>
-		<td>3*(17,4 to 39)ms</td>
+		<td>3*(17.4 to 39)ms</td>
+	</tr>
+	<tr>
+		<td>SAMSUNG</td>
+		<td>FALLING</td>
+		<td>11.0 &#181;s</td>
+		<td>13 &#181;s</td>
+		<td>2*22</td>
+		<td>2*(32.1 to 54.6)ms</td>
+	</tr>
+	<tr>
+		<td>SAMSUNG32</td>
+		<td>FALLING</td>
+		<td>11.0 &#181;s</td>
+		<td>14 &#181;s</td>
+		<td>34</td>
+		<td>54.6 to 72.6</td>
 	</tr>
 </tbody>
 </table>

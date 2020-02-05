@@ -13,12 +13,18 @@
  *      1 unit for each of the first 9 repeat codes; 
  *      5 units for each of the next 18 repeat codes;
  *      25 units for each of the subsequent repeat codes.
+ *
+ * In this example it's assumed that the IR sensor is connected to digital pin 2 and 
+ * the pin is usable for external interrupts.
+ * For more information on the boards' usable pins, see the library documentation at:
+ * https://github.com/LuisMiCa/IRsmallDecoder
+ * or the README.pdf file in the extras folder of this library. 
  */
  
  
 #define IR_SMALLD_NEC
 #include <IRsmallDecoder.h>
-IRsmallDecoder irDecoder(2); //assuming that the IR sensor is connected to pin 2
+IRsmallDecoder irDecoder(2);  //assuming that the IR sensor is connected to digital pin 2
 irSmallD_t irData;
 
 int value=0;

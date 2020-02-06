@@ -21,7 +21,7 @@ This is a Library for receiving and decoding IR signals from remote controls. Pe
 * It fully decodes the signals and separates the data;
 * It ignores unwanted initial repetition codes;
 * It offers an easier way to handle held keys;
-* Very loose signal tolerances (variations of almost 50% are accepted);
+* Very loose signal tolerances;
 * It uses error detection (when possible);
 * Low SRAM and Flash memory usage;
 * The decoding is done asynchronously, no timers required, so you can use them for other things;
@@ -61,9 +61,15 @@ The sensor's output must be connected to one of the Arduino's digital pin that i
 If you're not sure about how to connect the IR Sensor to the Arduino, go to: [IR sensor connection details](#appendix-b---ir-sensor-connection-details) at the end of this document.
 
 ## Installing the the library
+**With the Library Manager**
+- Run Arduino IDE and go to _tools > Manage Libraries..._   
+or _Sketch > Include Library > Manage Libraries..._;
+- Search for IRsmallDecoder and install.
+
+**Manually**
 - Navigate to the [Releases page](https://github.com/LuisMiCa/IRsmallDecoder/releases);
 - Download the latest release (zip file);
-- Run Arduino IDE and navigate to _Sketch > Include Library > Add .ZIP Library_;
+- Run Arduino IDE and go to _Sketch > Include Library > Add .ZIP Library_;
 - Or, instead of using Arduino IDE, extract the zip file and move the extracted folder to your libraries directory.
 
 ## Using the library
@@ -156,7 +162,7 @@ The following table shows the number of bits used by each protocol and the datat
 
 ### Notes
 - Only one protocol can be compiled at a time, however:   
-  - NECx also decodes NEC, but without the inverted address error check;
+  - NECx also decodes NEC, but without the address error check;
   - The RC5 implementation also decodes the extended protocol version, which as a field bit that is used as an extra command bit (making a total of 7 bits);
   - SIRC handles 12, 15 and 20 bits at the same time, by taking advantage of the fact that most Sony remotes send three signal frames each time one button is pressed. It uses triple frame verification, checks if a key was held and adds a delay to prevent unwanted keyHeld codes;
   - SIRC12, SIRC15 and SIRC20 use a basic (smaller and faster) implementation, without the triple frame verification and without the keyHeld check;
@@ -180,7 +186,7 @@ This first release was made without any contribution from other developers, but 
 [IRLib2](https://github.com/cyborg5/IRLib2), 
 [IRReadOnlyRemote](https://github.com/otryti/IRReadOnlyRemote), 
 [Infrared4Arduino](https://github.com/bengtmartensson/Infrared4Arduino), 
-and especially the [IRLremote](https://github.com/NicoHood/IRLremote), which was almost what I was looking for, but not quite... so I decided to make my own NEC decoder and then an RC5 and a SIRC, practically from scratch. Finaly I decided to put these decoders in a library, hoping that it will be useful to someone.
+and especially the [IRLremote](https://github.com/NicoHood/IRLremote), which was almost what I was looking for, but not quite... so I decided to make my own NEC decoder and then an RC5 and a SIRC, practically from scratch. Finally I decided to put these decoders in a library, hoping that it will be useful to someone.
 
 
 ## Contact information
@@ -219,7 +225,7 @@ To keep track of the sizes of this library, I used the ToggleLED example as a re
 <thead>
 <tr>
 <th>Reference sketch</th>
-<th>ToggleLED with NEC sketch</th>
+<th>ToggleLED sketch with NEC</th>
 </tr>
 </thead>
 <tbody>
@@ -395,7 +401,7 @@ As you've probably seen above, or if you've tried out any of the "Hello..." exam
 I can't say that it's simple to understand how the decoders work, some of the Statechart Machines I've designed turned out to be a bit convoluted. But if you still would like to take a look at the statechart diagrams, they can be found here <https://github.com/LuisMiCa/IRsmallDecoder/tree/master/extras/Statecharts>. Please note that they may not be an exact representation of what I've effectively implemented, but they are a good starting point. 
 
 ### No hardware specific instructions
-In order to make this library compatible with most of the Arduino boards, I didn't include any hardware specific instructions, but I did use a programming technique in which it's assumed that the microcontroller's endianness is Litle-Endian. On some boards you may even get a warning related to this, but it should work anyway. 
+In order to make this library compatible with most of the Arduino boards, I didn't include any hardware specific instructions, but I did use a programming technique in which it's assumed that the microcontroller's endianness is Little-Endian. On some boards you may even get a warning related to this, but it should work anyway. 
 
 ---
 <div style="page-break-after: always;"></div>

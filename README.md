@@ -38,12 +38,16 @@ This is a Library for receiving and decoding IR signals from remote controls. Pe
 * SAMSUNG 32 bits (16 of which are for error detection)
 
 ## Supported Boards 
-Because no hardware specific instructions are used, it probably works on all Arduino boards (and possibly others, I'm not quite sure, I've only tested it thoroughly on an Arduino Uno and a Mega). If you have problems with this library on some board, please submit an issue here: https://github.com/LuisMiCa/IRSmallDecoder/issues  or [contact me](#contact-information).
+Because no hardware specific instructions are used, it probably works on all Arduino boards (and possibly others, I'm not quite sure, I've only tested it thoroughly on an Arduino Uno and a Mega).
+
+ATtiny 25/45/85/24/44/84 microcontrollers are supported.
+
+If you have problems with this library on some board, please submit an issue here: https://github.com/LuisMiCa/IRSmallDecoder/issues  or [contact me](#contact-information).
  
 ## Connecting the IR sensor
 The sensor's output must be connected to one of the Arduino's digital pin that is usable for interrupts and, also, it must work with the CHANGE mode if the intended protocol uses this mode. (One example of a board that does not have CHANGE mode on some of the interrupt pins is the Arduino 101; and one protocol that uses that mode is the [RC5](#speed)).
 
-| Board                               | Usable Pins                    |
+| Board or microcontroller            | Usable digital pins numbers    |
 |-------------------------------------|--------------------------------|
 | Uno, Nano, Mini, other 328-based    | 2, 3                           |
 | Uno WiFi Rev.2                      | all digital pins               |
@@ -54,9 +58,12 @@ The sensor's output must be connected to one of the Arduino's digital pin that i
 | Due                                 | all digital pins               |
 | 101 with CHANGE mode                | 2, 5, 7, 8, 10, 11, 12, 13     |
 | 101 with other modes                | all digital pins               |
+| ATtiny 25/45/85                     | 2<sup>*</sup>                  |
+| ATtiny 24/44/84                     | 8<sup>*</sup>                  |
 
+<sup>[*] - Assuming you're using _damellis' ATtiny core_ (hig-hlow tech) or _SpenceKonde's ATtinyCore_. Other cores may have different pin assignments. </sup>
 
-<sup>(Source: https://www.arduino.cc/reference/en/language/functions/external-interrupts/attachinterrupt/)</sup>
+<sup>(Sources: <https://www.arduino.cc/reference/en/language/functions/external-interrupts/attachinterrupt/>; <http://highlowtech.org/?p=1695> and <https://github.com/SpenceKonde/ATTinyCore>)</sup>
 
 If you're not sure about how to connect the IR Sensor to the Arduino, go to: [IR sensor connection details](#appendix-b---ir-sensor-connection-details) at the end of this document.
 
@@ -173,20 +180,22 @@ The following table shows the number of bits used by each protocol and the datat
 
 ## Possible improvements
 - More protocols! That's obvious;
+- Support for more "non-standard" boards;
 - The keyHeld initial delay is hard-coded, I could make it configurable (in constructor) or even changeable (with method);
-- I'm thinking about adding methods to disable/re-enable the decoder, to temporarily allow the usage of other time critical interruptions (or to simply disable it when not needed);
+- I could add methods to disable/re-enable the decoder, to temporarily allow the usage of other time critical interruptions (or to simply disable it when not needed);
 - The _dataAvailable(irData)_ method could be overloaded with a version without irData;
 - For now, it's not easy for anyone to add other protocols;
 - I believe it may be possible to increase the number of usable pins, by using NicoHood's PinChangeInterrupt Library.
 
 
 ## Contributions
-This first release was made without any contribution from other developers, but I do have to say that this work was inspired by some of the existing IR Arduino Libraries: 
+The first release was made without any contribution from other developers, but I do have to say that this work was inspired by some of the existing IR Arduino Libraries: 
 [Arduino-IRremote](https://github.com/z3t0/Arduino-IRremote), 
 [IRLib2](https://github.com/cyborg5/IRLib2), 
 [IRReadOnlyRemote](https://github.com/otryti/IRReadOnlyRemote), 
 [Infrared4Arduino](https://github.com/bengtmartensson/Infrared4Arduino), 
 and especially the [IRLremote](https://github.com/NicoHood/IRLremote), which was almost what I was looking for, but not quite... so I decided to make my own NEC decoder and then an RC5 and a SIRC, practically from scratch. Finally I decided to put these decoders in a library, hoping that it will be useful to someone.
+Possible future contributions will be mentioned here if they are significant. 
 
 
 ## Contact information
@@ -219,8 +228,8 @@ The size of this library is, as the name implies, small (about 900 bytes on aver
 | SAMSUNG   |      880       |     29      |
 | SAMSUNG32 |      852       |     29      |
 
-To keep track of the sizes of this library, I used the ToggleLED example as a reference to determine the actual sizes, by compiling a version without the IRsmallDecoder and comparing it to the full version, for each of the supported protocols.
-
+To keep track of the sizes of this library, I used the ToggleLED example as a reference to determine the actual sizes, by compiling a version without the IRsmallDecoder and comparing it to the full version, for each of the supported protocols.  
+<div style="page-break-after: always;"></div>
 <table>
 <thead>
 <tr>
@@ -242,10 +251,10 @@ void setup() {
   pinMode(LED_BUILTIN, OUTPUT);
 }
 void loop() {
-//  if(irDecoder.dataAvailable(irData)){
+//if(irDecoder.dataAvailable(irData)){
     ledState=(ledState==LOW)? HIGH:LOW;
-    digitalWrite(LED_BUILTIN, ledState);
-//  }
+    digitalWrite(LED_BUILTIN,ledState);
+//}
 }
 
 // On Arduino UNO,
@@ -267,7 +276,7 @@ void setup() {
 void loop() {
   if(irDecoder.dataAvailable(irData)){
     ledState=(ledState==LOW)? HIGH:LOW;
-    digitalWrite(LED_BUILTIN, ledState);
+    digitalWrite(LED_BUILTIN,ledState);
   }
 }
 

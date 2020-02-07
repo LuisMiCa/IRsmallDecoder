@@ -3,6 +3,7 @@
 ## A small, fast and reliable infrared signals decoder to control Arduino projects with remotes.
 This is a Library for receiving and decoding IR signals from remote controls. Perfect for your Arduino projects that need a fast, simple and reliable decoder, but don't require the usage of multiple different protocols at the same time and don't need to send IR signals.
 
+
 ## Table of Contents
 * [Main features](#main-features)
 * [Supported Protocols](#supported-protocols)
@@ -17,6 +18,7 @@ This is a Library for receiving and decoding IR signals from remote controls. Pe
 * [Appendix A - Details about this library](#appendix-a---details-about-this-library)
 * [Appendix B - IR sensor connection details](#appendix-b---ir-sensor-connection-details)
 
+
 ## Main features
 * It fully decodes the signals and separates the data;
 * It ignores unwanted initial repetition codes;
@@ -29,13 +31,15 @@ This is a Library for receiving and decoding IR signals from remote controls. Pe
 * It uses one hardware (external) interrupt;
 * No hardware specific instructions are used.
 
+
 ## Supported Protocols
 * NEC
 * NECx
 * Philips RC5 and RC5x (simultaneously)
-* Sony SIRC 12, 15 and 20bits (individually or simultaneously)
+* Sony SIRC 12, 15 and 20 bits (individually or simultaneously)
 * SAMSUNG old standard
 * SAMSUNG 32 bits (16 of which are for error detection)
+
 
 ## Supported Boards 
 Because no hardware specific instructions are used, it probably works on all Arduino boards (and possibly others, I'm not quite sure, I've only tested it thoroughly on an Arduino Uno and a Mega).
@@ -43,7 +47,8 @@ Because no hardware specific instructions are used, it probably works on all Ard
 ATtiny 25/45/85/24/44/84 microcontrollers are supported.
 
 If you have problems with this library on some board, please submit an issue here: https://github.com/LuisMiCa/IRSmallDecoder/issues  or [contact me](#contact-information).
- 
+
+
 ## Connecting the IR sensor
 The sensor's output must be connected to one of the Arduino's digital pin that is usable for interrupts and, also, it must work with the CHANGE mode if the intended protocol uses this mode. (One example of a board that does not have CHANGE mode on some of the interrupt pins is the Arduino 101; and one protocol that uses that mode is the [RC5](#speed)).
 
@@ -61,11 +66,12 @@ The sensor's output must be connected to one of the Arduino's digital pin that i
 | ATtiny 25/45/85                     | 2<sup>*</sup>                  |
 | ATtiny 24/44/84                     | 8<sup>*</sup>                  |
 
-<sup>[*] - Assuming you're using _damellis' ATtiny core_ (hig-hlow tech) or _SpenceKonde's ATtinyCore_. Other cores may have different pin assignments. </sup>
+<sup>[*] - Assuming you're using _damellis' ATtiny core_ (high-low tech) or _SpenceKonde's ATtinyCore_. (Other cores may have different pin assignments). </sup>
 
 <sup>(Sources: <https://www.arduino.cc/reference/en/language/functions/external-interrupts/attachinterrupt/>; <http://highlowtech.org/?p=1695> and <https://github.com/SpenceKonde/ATTinyCore>)</sup>
 
 If you're not sure about how to connect the IR Sensor to the Arduino, go to: [IR sensor connection details](#appendix-b---ir-sensor-connection-details) at the end of this document.
+
 
 ## Installing the the library
 **With the Library Manager**
@@ -78,6 +84,7 @@ or _Sketch > Include Library > Manage Libraries..._;
 - Download the latest release (zip file);
 - Run Arduino IDE and go to _Sketch > Include Library > Add .ZIP Library_;
 - Or, instead of using Arduino IDE, extract the zip file and move the extracted folder to your libraries directory.
+
 
 ## Using the library
 In the INO file, **one** of the following directives must be used:
@@ -107,7 +114,6 @@ And also a decoder data structure:
 ```ino
 irSmallD_t irData;
 ```
-
 
 Inside the loop(), check if the decoder has new data available. If so, do something with it:
 ```ino
@@ -167,6 +173,7 @@ The following table shows the number of bits used by each protocol and the datat
 | SAMSUNG   |   bool  |  8/uint8_t | 12/uint16_t |     --     |
 | SAMSUNG32 |   bool  |  8/uint8_t |  8/uint8_t  |     --     |
 
+
 ### Notes
 - Only one protocol can be compiled at a time, however:   
   - NECx also decodes NEC, but without the address error check;
@@ -178,6 +185,7 @@ The following table shows the number of bits used by each protocol and the datat
 
 - If a new signal is received before the available data is retrieved, that previous data is discarded. This may happen if the loop takes to long to recheck if there's new data available, especially if delays are used. (They do not interfere with the decoding but I wouldn't recommended their use).
 
+
 ## Possible improvements
 - More protocols! That's obvious;
 - Support for more "non-standard" boards;
@@ -186,6 +194,7 @@ The following table shows the number of bits used by each protocol and the datat
 - The _dataAvailable(irData)_ method could be overloaded with a version without irData;
 - For now, it's not easy for anyone to add other protocols;
 - I believe it may be possible to increase the number of usable pins, by using NicoHood's PinChangeInterrupt Library.
+- SIRC12, SIRC15 and SIRC20 do not have the keyHeld feature. SIRC fills that gap but requires 3 frames for each keypress.
 
 
 ## Contributions
@@ -207,10 +216,12 @@ Copyright (c) 2020 Luis Carvalho
 This library is licensed under the MIT license.  
 See the LICENSE file for details.
 
+
 ---
 <div style="page-break-after: always;"></div>
 
 ## Appendix A - Details about this library
+
 ### Size
 The size of this library is, as the name implies, small (about 900 bytes on average, for the Arduino UNO board) and the memory usage is also reduced (around 30 bytes). Keep in mind that these values vary depending on the selected protocol and the board used.
 
@@ -396,21 +407,27 @@ The decoding is done asynchronously, meaning it does not rely on a timer to rece
 Most of the protocols' Statechart Machines are implemented using _switch cases_, but I also use the "labels as values" GCC extension (AKA "computed gotos") to implement some of the more complex machines. It's not a C++ standard but it should work with all IDEs that use the GCC (like Arduino IDE). 
 
 If you have problems compiling any of the protocols that use the "labels as values" extension, please submit an issue here: <https://github.com/LuisMiCa/IRsmallDecoder/issues>  or [contact me](#contact-information).
- 
+
+
 ### Unwanted initial repetition codes
 Remote control keys do not "bounce", but the remotes do tend to send more codes than we wish for, when we press a button. That's because, after a very short interval, they start to send repeat codes. To avoid those unwanted initial repetitions, this library ignores a few of those repetition codes before confirming that the button is really being held.
+
 
 ### Data separation
 The data sent by the remotes is decoded according to the protocols' specifications and separated into different variables. In most remotes only the 8 bit command matters, so you don't have to work with 16 or 32 bit codes, reducing code size and memory usage.
 
+
 ### Simplicity
 As you've probably seen above, or if you've tried out any of the "Hello..." examples, this library is very simple to use and it's not full of rarely needed features. That's what makes it small and why it uses very few resources. Additional features may be included in the future, but only if they are requested and do not affect the size and/or speed significantly. 
+
 
 ### How it works
 I can't say that it's simple to understand how the decoders work, some of the Statechart Machines I've designed turned out to be a bit convoluted. But if you still would like to take a look at the statechart diagrams, they can be found here <https://github.com/LuisMiCa/IRsmallDecoder/tree/master/extras/Statecharts>. Please note that they may not be an exact representation of what I've effectively implemented, but they are a good starting point. 
 
+
 ### No hardware specific instructions
 In order to make this library compatible with most of the Arduino boards, I didn't include any hardware specific instructions, but I did use a programming technique in which it's assumed that the microcontroller's endianness is Little-Endian. On some boards you may even get a warning related to this, but it should work anyway. 
+
 
 ---
 <div style="page-break-after: always;"></div>

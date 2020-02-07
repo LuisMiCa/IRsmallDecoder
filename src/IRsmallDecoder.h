@@ -75,7 +75,12 @@ bool IRsmallDecoder::_irCopyingData = false; //to avoid volatile _irData corrupt
 
 IRsmallDecoder::IRsmallDecoder(uint8_t interruptPin){
   pinMode(interruptPin,INPUT_PULLUP); //active low
-  attachInterrupt(digitalPinToInterrupt(interruptPin), irISR, IR_ISR_MODE);
+  #if defined(__AVR_ATtiny24__) || defined(__AVR_ATtiny44__) || defined(__AVR_ATtiny84__) || \
+      defined(__AVR_ATtiny25__) || defined(__AVR_ATtiny45__) || defined(__AVR_ATtiny85__)
+    attachInterrupt(0, irISR, IR_ISR_MODE);
+  #else  
+    attachInterrupt(digitalPinToInterrupt(interruptPin), irISR, IR_ISR_MODE);
+  #endif
 }
 
 bool IRsmallDecoder::dataAvailable(irSmallD_t &irData){

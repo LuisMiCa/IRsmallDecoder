@@ -1,4 +1,4 @@
-/* Single Hold with NEC
+/* Single Hold 
  *  
  * This example is part of the the IRfastDecoder library and is intended to demonstrate 
  * a possible usage for the keyHeld data member.
@@ -10,6 +10,7 @@
  *  - Upload the sketch and open serial Monitor;
  *  - "Teach the Arduino" which keys you want to use;
  *  - Hold the selected keys to turn on/off the built-in LED.
+ *    If you keep holding, it won't do anything else.
  *
  * In this example it's assumed that the IR sensor is connected to digital pin 2 and 
  * the pin is usable for external interrupts.
@@ -19,9 +20,9 @@
  */
  
  
-//#define IR_SMALLD_NEC
+#define IR_SMALLD_NEC
 //#define IR_SMALLD_NECx
-#define IR_SMALLD_RC5
+//#define IR_SMALLD_RC5
 //#define IR_SMALLD_SIRC
 //#define IR_SMALLD_SAMSUNG
 //#define IR_SMALLD_SAMSUNG32
@@ -37,14 +38,14 @@ void setup() {
   pinMode(LED_BUILTIN, OUTPUT);
   Serial.begin(250000);
   
-  Serial.print(F("Press the key to turn \"ON\" the LED "));
+  Serial.print(F("Press the key that will turn \"ON\" the LED "));
   while(!irDecoder.dataAvailable(irData)); //waiting for one keypress
   keyOn=irData.cmd;
   Serial.print(F("(key cmd=")); 
   Serial.print(keyOn, HEX);
   Serial.println(F(")"));
   
-  Serial.print(F("Press the key to turn \"OFF\" the LED  "));
+  Serial.print(F("Press the key that will turn \"OFF\" the LED "));
   do{
     while(!irDecoder.dataAvailable(irData)); //waiting for another keypress
   }while(irData.cmd == keyOn); //if it's the same key, go back and wait for another

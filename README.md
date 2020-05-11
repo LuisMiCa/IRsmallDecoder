@@ -9,7 +9,7 @@ This is a Library for receiving and decoding IR signals from remote controls. Pe
 * [Supported Protocols](#supported-protocols)
 * [Supported Boards](#supported-boards)
 * [Connecting the IR sensor](#connecting-the-ir-sensor)
-* [Installing the the library](#installing-the-the-library)
+* [Installing the library](#installing-the-library)
 * [Using the library](#using-the-library)
 * [Possible improvements](#possible-improvements)
 * [Contributions](#contributions)
@@ -73,7 +73,7 @@ The sensor's output must be connected to one of the Arduino's digital pin that i
 If you're not sure about how to connect the IR Sensor to the Arduino, go to: [IR sensor connection details](#appendix-b---ir-sensor-connection-details) at the end of this document.
 
 
-## Installing the the library
+## Installing the library
 **With the Library Manager**
 - Run Arduino IDE and go to _tools > Manage Libraries..._   
 or _Sketch > Include Library > Manage Libraries..._;

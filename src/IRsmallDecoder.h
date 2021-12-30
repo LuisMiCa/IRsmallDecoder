@@ -65,6 +65,7 @@ class IRsmallDecoder {
   public:
     IRsmallDecoder(uint8_t interruptPin);
     bool dataAvailable(irSmallD_t &irData);
+    bool dataAvailable();
 };
 
 //*****************************************************************************
@@ -95,6 +96,12 @@ bool IRsmallDecoder::dataAvailable(irSmallD_t &irData){
   else return false;
 }
 
+bool IRsmallDecoder::dataAvailable() {
+  if (_irDataAvailable) {
+    _irDataAvailable = false;
+    return true;
+  } else return false;
+}
 
 //*****************************************************************************
 // Computed GOTOs (labels as values) FSM control:

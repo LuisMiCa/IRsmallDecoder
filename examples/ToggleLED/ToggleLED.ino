@@ -26,15 +26,14 @@
 #include <IRsmallDecoder.h>
 
 IRsmallDecoder irDecoder(2); //assuming that the IR sensor is connected to digital pin 2
-irSmallD_t irData;
-int ledState=LOW; 
+int ledState=LOW;
 
 void setup() {
   pinMode(LED_BUILTIN, OUTPUT);
 }
 
 void loop() {
-  if(irDecoder.dataAvailable(irData)){       
+  if(irDecoder.dataAvailable()){
     ledState = (ledState == LOW)? HIGH : LOW; //toggle with conditional operator
     digitalWrite(LED_BUILTIN, ledState);
   }

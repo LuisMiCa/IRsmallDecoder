@@ -24,8 +24,8 @@
  *
  * - RC5 works for both normal and extended versions;
  * - SIRC12, SIRC15 and SIRC20 use a basic (smaller and faster) implementation but without some features...
- * - SIRC handles SIRC 12, 15 and 20 bits, by taking advantage of the fact that most Sony remotes;
- *   send three frames each time one button is pressed. It uses triple frame verification and checks if keyHeld;
+ * - SIRC handles SIRC 12, 15 and 20 bits, by taking advantage of the fact that most Sony remotes send
+ *   three frames each time one button is pressed. It uses triple frame verification and checks if keyHeld;
  */
 
 #ifndef IRsmallDecoder_h
@@ -73,7 +73,7 @@ class IRsmallDecoder {
 
 //*****************************************************************************
 //static variables from a class must be re-declared/initialized
-//outside the class' forward declaration/definition (usually on the cpp file not the header)
+//outside the class' forward declaration/definition (usually in the cpp file not the header)
 volatile bool IRsmallDecoder::_irDataAvailable = false;
 volatile irSmallD_t IRsmallDecoder::_irData;
 bool IRsmallDecoder::_irCopyingData = false;  //to avoid volatile _irData corruption by the ISR
@@ -90,7 +90,7 @@ IRsmallDecoder::IRsmallDecoder(uint8_t interruptPin) {
 }
 
 void IRsmallDecoder::enable() {
-  attachInterrupt(_irInterruptNum, irISR, IR_ISR_MODE);  //interrupt flag may be already set
+  attachInterrupt(_irInterruptNum, irISR, IR_ISR_MODE);  //interrupt flag may already be set
   //if so, ISR will be immediately executed and the FSM jumps out of standby state
   this->irISR();  // two consecutive calls will place any of the FSMs in standby
   this->irISR();

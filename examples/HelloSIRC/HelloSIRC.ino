@@ -11,6 +11,7 @@
  *
  * In this example it's assumed that the IR sensor is connected to digital pin 2 and
  * the pin is usable for external interrupts.
+ * 
  * For more information on the boards' usable pins, see the library documentation at:
  * https://github.com/LuisMiCa/IRsmallDecoder
  * or the README.pdf file in the extras folder of this library. 

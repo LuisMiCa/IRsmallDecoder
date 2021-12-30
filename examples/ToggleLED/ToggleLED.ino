@@ -6,8 +6,9 @@
  *  - Upload to the Arduino board, connect the IR sensor and
  *  - press any key on the remote to toggle the builtin LED
  *
- * In this example it's assumed that the IR sensor is connected to digital pin 2 and 
- * the pin is usable for external interrupts.
+ * In this example it's assumed that the board has a builtin LED and the IR sensor is 
+ * connected to digital pin 2, which must be usable for external interrupts.
+ * 
  * For more information on the boards' usable pins, see the library documentation at:
  * https://github.com/LuisMiCa/IRsmallDecoder
  * or the README.pdf file in the extras folder of this library. 

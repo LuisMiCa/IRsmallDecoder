@@ -10,9 +10,13 @@
  *   IRSMALLD_DEBUG_TIME     - Prints ISR execution time
  * 
  * NOTES:
+ * - The usage of debuging functionalities requires a Serial.begin in the setup;
+ * - The serial communication speed must be high, to avoid timing errors;
+ *   A Baud Rate of 250000 seems to work;
+ * - The usage of Serial communications inside an interrupt is not recommended, but 
+ *   in this case, it's just a few prints for debuging purposes.
  * - IRSMALLD_DEBUG_TIME mode uses AVR 328p Timer1 hardware specific code;
- *   Results are in Micro Seconds assuming 16MHz clock (Clk Count is divided by 16 to get µs);
- * - The serial communication speed must be high, to avoid timing errors.
+ *   Results are in micro seconds, assuming a 16MHz clock (Clk Count is divided by 16 to get µs);
  */
 
 

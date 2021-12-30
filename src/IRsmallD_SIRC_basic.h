@@ -45,7 +45,7 @@
  */
 
 
-void IRsmallDecoder::irISR() { //executed every time the IR signal goes down (actually it's on RISING)
+void IRsmallDecoder::irISR() { //executed every time the IR signal goes down (but it's actually RISING @ SensorOutput)
   #if defined(IR_SMALLD_SIRC12) //Conditional code inclusion (at compile time) 
     const uint8_t c_NumberOfBits = 12;
   #elif defined(IR_SMALLD_SIRC15)
@@ -69,7 +69,7 @@ void IRsmallDecoder::irISR() { //executed every time the IR signal goes down (ac
   static uint32_t duration;
   static uint8_t bitCount;
   static unsigned long startTime = -1;  //FFFF...
-  static union {//received bits are stored in reversed order (11000101... -> ...10100011)
+  static union {  //received bits are stored in reversed order (11000101... -> ...10100011)
     #if (IR_SMALLD_SIRC12 || IR_SMALLD_SIRC15)
       uint16_t all = 0;  //Arduino uses Little Endian so, if all=ABCD then in memory it's CDAB (hex format)
       uint8_t byt[2];    //then we get byt[0]=CD and byt[1]=AB (type punning with a union...)
@@ -87,7 +87,7 @@ void IRsmallDecoder::irISR() { //executed every time the IR signal goes down (ac
   startTime = micros();
   DBG_PRINTLN_DUR(duration)
 
-  switch (state) { //asynchronous (event-driven) Finite State Machine
+  switch (state) {  //asynchronous (event-driven) Finite State Machine
     case 0: //Standby
       if (duration > c_GapMin) {  //only starts after a GAP without signals
         bitCount = 0;

@@ -1,19 +1,20 @@
 /* Single Hold 
  *  
- * This example is part of the the IRfastDecoder library and is intended to demonstrate 
+ * This example is part of the the IRsmallDecoder library and is intended to demonstrate 
  * a possible usage for the keyHeld data member.
  *  
  * How to use this sketch: 
  *  - Connect the sensor (see library documentation);
  *  - Uncomment the #define for the desired protocol,
  *    (leave the others as comments, only one is allowed);
- *  - Upload the sketch and open serial Monitor;
+ *  - Upload the sketch and open the Serial Monitor;
  *  - "Teach the Arduino" which keys you want to use;
  *  - Hold the selected keys to turn on/off the built-in LED.
  *    If you keep holding, it won't do anything else.
  *
  * In this example it's assumed that the IR sensor is connected to digital pin 2 and 
  * the pin is usable for external interrupts.
+ * 
  * For more information on the boards' usable pins, see the library documentation at:
  * https://github.com/LuisMiCa/IRsmallDecoder
  * or the README.pdf file in the extras folder of this library. 

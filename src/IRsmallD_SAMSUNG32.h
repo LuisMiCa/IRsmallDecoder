@@ -35,13 +35,13 @@
 #define STOP_SPACE_MAX 72563       //72562.5 to be more precise
 
 
-void IRsmallDecoder::irISR() { //executed every time the IR signal goes UP (but FALLING @SensorOutput)
+void IRsmallDecoder::irISR() { //executed every time the IR signal goes UP (but it's actually FALLING @ SensorOutput)
   // SAMSUNG32 timing thresholds:
   const uint16_t c_LMmax = LEADING_MARK * 1.1;          // 10% more = 9900
   const uint16_t c_LMmin = LEADING_MARK * 0.9;          // 10% less = 8100
   const uint16_t c_M1max = BIT_1_MARK + BIT_TOLERANCE;  // 2550+712=3262
   const uint16_t c_M1min = BIT_1_MARK - BIT_TOLERANCE;  // 2550-712=1838
-//const uint16_t c_M0max = BIT_0_MARK + BIT_TOLERANCE;  // 1125+712=1837     //NOT USED
+  //const uint16_t c_M0max = BIT_0_MARK + BIT_TOLERANCE;// 1125+712=1837     //NOT USED
   const uint16_t c_M0min = BIT_0_MARK - BIT_TOLERANCE;  // 1125-712= 413
   const uint32_t c_GapMax = STOP_SPACE_MAX + 6 * BIT_TOLERANCE;  // bigger tolerance
   const uint16_t c_GapMin = STOP_SPACE_MIN - 6 * BIT_TOLERANCE;  // 6*712 = 4272
@@ -86,11 +86,11 @@ void IRsmallDecoder::irISR() { //executed every time the IR signal goes UP (but 
 
     case 2: //receiving:
       if (duration < c_M0min || duration > c_M1max) state = 0;  //error, not a bit mark
-      else {                                                    // it's M0 or M1
+      else {                                                    //it's M0 or M1
         irSignal[byteIndex] >>= 1;                              //push a 0 from left to right (will be left at 0 if it's M0)
         if (duration >= c_M1min) irSignal[byteIndex] |= 0x80;   //it's M1, change MSB to 1
         bitCount++;
-        if (bitCount == 8 || bitCount == 16 || bitCount == 24) byteIndex++;          //byte full, got to next one (stay in same state)
+        if (bitCount == 8 || bitCount == 16 || bitCount == 24) byteIndex++;          //byte full, proceed to the next one (stay in same state)
         else if (bitCount == 32) {                                                   //all bits received,
           state = 0;                                                                 //all paths lead to the standby state...
           if (irSignal[0] == irSignal[1] && irSignal[2] == (uint8_t)~irSignal[3]) {  //address OK && command OK,

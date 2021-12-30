@@ -1,11 +1,11 @@
 /* keyHeld with NEC
  *  
- * This example is part of the the IRfastDecoder library and is intended to demonstrate 
+ * This example is part of the the IRsmallDecoder library and is intended to demonstrate 
  * a possible usage for the keyHeld data member.
  *  
  * How to use this sketch: 
  *  - Connect the sensor (see library documentation);
- *  - Upload the sketch and open serial Monitor;
+ *  - Upload the sketch and open the Serial Monitor;
  *  - "Teach the Arduino" which keys you want to use to increase or decrease a value: 
  *    point the NEC remote to the IR sensor and press any key of your choosing then press a different key;
  *  - Use the selected keys to increase/decrease the value, one unit at a time for each keypress,
@@ -16,6 +16,7 @@
  *
  * In this example it's assumed that the IR sensor is connected to digital pin 2 and 
  * the pin is usable for external interrupts.
+ * 
  * For more information on the boards' usable pins, see the library documentation at:
  * https://github.com/LuisMiCa/IRsmallDecoder
  * or the README.pdf file in the extras folder of this library. 

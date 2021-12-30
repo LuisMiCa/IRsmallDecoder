@@ -3,8 +3,8 @@
  *
  * Notes: 
  *  - For the SIRC15 or SIRC20 protocols, use IR_SMALLD_SIRC15 or IR_SMALLD_SIRC20 
- *    instead of IR_SMALLD_SIRC12 (in the #define ...);
- *  - Unlike IR_SMALLD_SIRC, IR_SMALLD_SIRC12/15/20 does not have the keyHeld data member;
+ *    instead of the IR_SMALLD_SIRC12 (in the #define ...);
+ *  - Unlike IR_SMALLD_SIRC, IR_SMALLD_SIRC12/15/20 do not have the keyHeld data member;
  *  - IR_SMALLD_SIRC20 has an additional data member (ext);
  *  - Each keypress on a SIRC remote, usually sends three signal frames. (The two additional 
  *    signal repetitions are ignored in the IR_SMALLD_SIRC, but not in the IR_SMALLD_SIRC12/15/20);
@@ -14,6 +14,7 @@
  *	
  * In this example it's assumed that the IR sensor is connected to digital pin 2 and 
  * the pin is usable for external interrupts.
+ * 
  * For more information on the boards' usable pins, see the library documentation at:
  * https://github.com/LuisMiCa/IRsmallDecoder
  * or the README.pdf file in the extras folder of this library. 

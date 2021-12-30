@@ -7,13 +7,14 @@
  *  - Connect the sensor (see library documentation);
  *  - Uncomment the #define for the desired protocol,
  *    (leave the others as comments, only one is allowed);
- *  - Upload the sketch and open the serial Monitor;
+ *  - Upload the sketch and open the Serial Monitor;
  *  - "Teach the Arduino" which key you want to use to disable the decoder;
  *  - The selected key will temporarily disable the decoder;
  *  - Any other key on the remote will toggle the builtin LED;
  *
  * In this example it's assumed that the board has a builtin LED and the IR sensor is 
  * connected to digital pin 2, which must be usable for external interrupts.
+ * 
  * For more information on the boards' usable pins, see the library documentation at:
  * https://github.com/LuisMiCa/IRsmallDecoder
  * or the README.pdf file in the extras folder of this library. 

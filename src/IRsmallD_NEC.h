@@ -22,6 +22,9 @@
  * low Address       high address      8bit command      inverted command
  * LSB ... MSB       LSB ... MSB       LSB ... MSB       LSB ... MSB 
  *
+ * 
+ * The signal ends with an extra 560µs pulse, which is required to determine the value of the last bit.
+ * 
  * Notes:
  *   - Inverted bytes have 1s instead of 0s and vice-versa;
  *   - Extended NEC protocol sacrifices the address redundancy to extend 
@@ -33,7 +36,7 @@
  */
 
 
-void IRsmallDecoder::irISR() { //executed every time the IR signal goes up (actually it's on FALL)
+void IRsmallDecoder::irISR() { //executed every time the IR signal goes up (but it's actually FALLING @ SensorOutput)
   // NEC timings in micro seconds:
   // Minimum Gap length = repeatPeriod - SignalFrame = 108000 - 67500 = 40500
   const uint16_t c_GapMin = 32400;  // = 40500 * 0.8 (20% less)
@@ -70,7 +73,7 @@ void IRsmallDecoder::irISR() { //executed every time the IR signal goes up (actu
   DBG_PRINT_STATE(state);
   DBG_RESTART_TIMER();
 
-  duration = micros() - startTime;  //note: micros() has a 4μs resolution (multiples of 4) @16MHz and 8μs @8MHz
+  duration = micros() - startTime;  //note: micros() has a 4μs resolution (multiples of 4) @ 16MHz or 8μs @ 8MHz
   startTime = micros();
   DBG_PRINTLN_DUR(duration);
 

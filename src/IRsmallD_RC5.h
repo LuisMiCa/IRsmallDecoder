@@ -8,12 +8,13 @@
  * ------------------------
  * Modulation type: Manchester code (bi-phase) - LOW to HIGH for ACE (1), HIGH to LOW for ZERO (0)
  * Carrier frequency: 36 KHz
- * Bit period: 1.778 ms  (signal high for 889 μs (or double); low for 889 μs (or double))
+ * Bit period: 1.778 ms (HIGH for 889μs then LOW for 889μs or vice-versa)
+ * When the bits are combined, the signal pulses' durations are 889μs or 1778μs, and the same goes for the spaces;
  * Total signal duration: 24.892 ms 
  * Signal repetition interval: 100 ms
  *
  * 14 bit signal (in order of transmission):
- * 2 Start bits ; 1 Toggle bit; 5 Address bits(MSB to LSB); 6 Command bits (MSB to LSB)
+ * 2 Start bits; 1 Toggle bit; 5 Address bits(MSB to LSB); 6 Command bits (MSB to LSB)
  *
  * In RC5 extended, the second Start bit is the Field bit. It indicates whether the command sent is in the 
  * lower field (bit 1: cmd=[0..63]) or the upper field (bit 0: cmd=[64..127]).
@@ -25,7 +26,7 @@
  */
 
 
-void IRsmallDecoder::irISR() { //executed every time the IR signal changes
+void IRsmallDecoder::irISR() { //executed every time the IR signal changes (caution, it's reversed because of the INPUT_PULLUP mode)
   // RC5 timings in micro secs:
   const uint32_t c_rptPmax   = 113792 * 1.2;  //Repetition period upper threshold (20% above standard)
   const uint32_t c_gapMin    = 88900 * 0.8;   //Lower threshold of the gap between 2 signals (20% below standard)
@@ -43,7 +44,7 @@ void IRsmallDecoder::irISR() { //executed every time the IR signal changes
   static uint16_t irSignal;            //only 14 bits used
   static bool     prevToggle = false;  //used to convert Toggle to Held
   static uint8_t  repeatCount = 0;
-  static uint32_t lastBitTime = 0;  //for the repeat code confirmation
+  static uint32_t lastBitTime = 0;     //for the repeat code confirmation
 
   FSM_INITIALIZE(st_standby);
 

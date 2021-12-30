@@ -3,13 +3,12 @@
  * This file is part of the IRsmallDecoder library for Arduino
  * Copyright (c) 2020 Luis Carvalho
  *
- *
- * Additional Features:
- * --------------------
+ * 
+ * Additional Features (not included in the basic versions):
+ * ---------------------------------------------------------
  *  - Bit number auto-detection (12, 15 or 20 bits);
  *  - Triple frame verification;
  *  - KeyHeld check/delay.
- *
  *
  * Protocol specifications:
  * ------------------------
@@ -43,7 +42,7 @@
  */
 
 
-void IRsmallDecoder::irISR() { //executed every time the IR signal goes down (actually it's on RISE)
+void IRsmallDecoder::irISR() { //executed every time the IR signal goes down (but it's actually RISING @ SensorOutput)
   // SIRC timings' thresholds in micro secs:
   //Minimum standard Gap length = (75-(4+3*20))*600  --> assuming 20 bit 1s, which has the smallest gapMin
   //Maximum standard Gap length = (75-(4+2*12))*600  --> assuming 12 bit 0s, which has the biggest gapMax
@@ -56,14 +55,14 @@ void IRsmallDecoder::irISR() { //executed every time the IR signal goes down (ac
   const uint16_t c_M1min = 1500; // = 1800 - 300
   //const uint16_t c_M0max = 1499; // = 1200 + 300 - 1    //unused const
   const uint16_t c_M0min =  900; // = 1200 - 300 (it could be less)
- //number of initial repeats to be ignored:
+  //number of initial repeats to be ignored:
   const uint8_t c_RptCount = 5;
 
   // FSM variables:
   static uint32_t duration;
   static uint8_t  bitCount;
-  static unsigned long startTime=-1;//FFFF...
-  static union {//received bits are stored in reversed order (11000101... -> ...10100011)
+  static unsigned long startTime=-1;  //FFFF...
+  static union {       // received bits are stored in reversed order (11000101... -> ...10100011)
     uint32_t all = 0;  // if all=ABCDEF00 then in memory it's 00EFCDAB (hex format)
     uint8_t  byt[4];   // byt[0]=00;  byt[1]=EF;  byt[2]=CD;  byt[3]=AB
   } irSignal;

@@ -36,27 +36,27 @@ int increment = 1;
 void setup() {
   Serial.begin(250000);
   
-  Serial.print(F("Press the \"UP\" key on the remote "));
+  Serial.print("Press the \"UP\" key on the remote ");
   while(!irDecoder.dataAvailable(irData)); //waiting for one keypress
   keyInc=irData.cmd;
-  Serial.print(F("(key cmd=")); 
+  Serial.print("(key cmd=");
   Serial.print(keyInc, HEX);
-  Serial.println(F(")"));
+  Serial.println(")");
   
-  Serial.print(F("Press the \"DOWN\" key on the remote "));
+  Serial.print("Press the \"DOWN\" key on the remote ");
   do{
     while(!irDecoder.dataAvailable(irData)); //waiting for another keypress
   }while(irData.cmd == keyInc); //if it's the same key, go back and wait for another
   keyDec=irData.cmd;
-  Serial.print(F("(key cmd=")); 
+  Serial.print("(key cmd=");
   Serial.print(keyDec, HEX);
-  Serial.println(F(")"));
+  Serial.println(")");
   
   Serial.println();
-  Serial.println(F("Press the \"UP\" key to increase the value;"));
-  Serial.println(F("Press and hold it to increase faster and faster;"));
-  Serial.println(F("Press the \"DOWN\" key to decrease the value;"));
-  Serial.println(F("Press and hold it to decrease faster and faster."));
+  Serial.println("Press the \"UP\" key to increase the value;");
+  Serial.println("Press and hold it to increase faster and faster;");
+  Serial.println("Press the \"DOWN\" key to decrease the value;");
+  Serial.println("Press and hold it to decrease faster and faster.");
   Serial.println();
 }
 

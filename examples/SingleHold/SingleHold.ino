@@ -38,25 +38,25 @@ void setup() {
   pinMode(LED_BUILTIN, OUTPUT);
   Serial.begin(250000);
   
-  Serial.print(F("Press the key that will turn \"ON\" the LED "));
+  Serial.print("Press the key that will turn \"ON\" the LED ");
   while(!irDecoder.dataAvailable(irData)); //waiting for one keypress
   keyOn=irData.cmd;
-  Serial.print(F("(key cmd=")); 
+  Serial.print("(key cmd=");
   Serial.print(keyOn, HEX);
-  Serial.println(F(")"));
+  Serial.println(")");
   
-  Serial.print(F("Press the key that will turn \"OFF\" the LED "));
+  Serial.print("Press the key that will turn \"OFF\" the LED ");
   do{
     while(!irDecoder.dataAvailable(irData)); //waiting for another keypress
   }while(irData.cmd == keyOn); //if it's the same key, go back and wait for another
   keyOff=irData.cmd;
-  Serial.print(F("(key cmd=")); 
+  Serial.print("(key cmd=");
   Serial.print(keyOff, HEX);
-  Serial.println(F(")"));
+  Serial.println(")");
   
   Serial.println();
-  Serial.println(F("Hold the \"ON\" key to turn on the Built-in LED;"));
-  Serial.println(F("Hold the \"OFF\" key to turn off the Built-in LED;"));
+  Serial.println("Hold the \"ON\" key to turn on the Built-in LED;");
+  Serial.println("Hold the \"OFF\" key to turn off the Built-in LED;");
 
   Serial.println();
 }

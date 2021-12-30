@@ -57,13 +57,16 @@
 //*****************************************************************************
 class IRsmallDecoder {
   private:
-    static volatile bool _irDataAvailable; //will be updated by the ISR
-    static volatile irSmallD_t _irData;    //will be updated by the ISR
-    static bool _irCopyingData; //not changed by the ISR, no need for volatile
     static void irISR();
+    static volatile bool _irDataAvailable;  //will be updated by the ISR
+    static volatile irSmallD_t _irData;     //will be updated by the ISR
+    static bool _irCopyingData;             //used by the ISR but not changed by it, no need for volatile
+    uint8_t _irInterruptNum;                //used by enable/disable Decoder methods
     
   public:
     IRsmallDecoder(uint8_t interruptPin);
+    void disable();
+    void enable(); 
     bool dataAvailable(irSmallD_t &irData);
     bool dataAvailable();
 };
@@ -79,18 +82,30 @@ IRsmallDecoder::IRsmallDecoder(uint8_t interruptPin){
   pinMode(interruptPin,INPUT_PULLUP); //active low
   #if defined(__AVR_ATtiny24__) || defined(__AVR_ATtiny44__) || defined(__AVR_ATtiny84__) || \
       defined(__AVR_ATtiny25__) || defined(__AVR_ATtiny45__) || defined(__AVR_ATtiny85__)
-    attachInterrupt(0, irISR, IR_ISR_MODE);
-  #else  
-    attachInterrupt(digitalPinToInterrupt(interruptPin), irISR, IR_ISR_MODE);
+    _irInterruptNum=0;
+  #else
+    _irInterruptNum = digitalPinToInterrupt(interruptPin);
   #endif
+  attachInterrupt(_irInterruptNum, irISR, IR_ISR_MODE);
+}
+
+void IRsmallDecoder::enable() {
+  attachInterrupt(_irInterruptNum, irISR, IR_ISR_MODE);  //interrupt flag may be already set
+  //if so, ISR will be immediately executed and the FSM jumps out of standby state
+  this->irISR();  // two consecutive calls will place any of the FSMs in standby
+  this->irISR();
+}
+
+void IRsmallDecoder::disable() {
+  detachInterrupt(_irInterruptNum);
 }
 
 bool IRsmallDecoder::dataAvailable(irSmallD_t &irData){
   if (_irDataAvailable) {
     _irCopyingData=true; //Let the ISR know that it cannot change the data while it's being copied
-    memcpy(&irData, (void*)&_irData, sizeof(_irData));   
+    memcpy(&irData, (void*)&_irData, sizeof(_irData));
     _irCopyingData=false; //an ATOMIC_BLOCK would be better, but it's not supported on many boards
-    _irDataAvailable=false;    
+    _irDataAvailable=false;
     return true;
   }
   else return false;

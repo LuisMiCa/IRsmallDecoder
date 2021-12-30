@@ -18,8 +18,7 @@
  * https://github.com/LuisMiCa/IRsmallDecoder
  * or the README.pdf file in the extras folder of this library. 
  */
- 
- 
+
 #define IR_SMALLD_NEC
 //#define IR_SMALLD_NECx
 //#define IR_SMALLD_RC5
@@ -32,28 +31,28 @@
 IRsmallDecoder irDecoder(2);  //assuming that the IR sensor is connected to digital pin 2
 irSmallD_t irData;
 int keyOn, keyOff;
-bool keyReleased=true;
+bool keyReleased = true;
 
 void setup() {
   pinMode(LED_BUILTIN, OUTPUT);
   Serial.begin(250000);
-  
+
   Serial.print("Press the key that will turn \"ON\" the LED ");
-  while(!irDecoder.dataAvailable(irData)); //waiting for one keypress
-  keyOn=irData.cmd;
+  while (!irDecoder.dataAvailable(irData)) ;  //waiting for one keypress
+  keyOn = irData.cmd;
   Serial.print("(key cmd=");
   Serial.print(keyOn, HEX);
   Serial.println(")");
-  
+
   Serial.print("Press the key that will turn \"OFF\" the LED ");
-  do{
-    while(!irDecoder.dataAvailable(irData)); //waiting for another keypress
-  }while(irData.cmd == keyOn); //if it's the same key, go back and wait for another
-  keyOff=irData.cmd;
+  do {
+    while (!irDecoder.dataAvailable(irData)) ;  //waiting for another keypress
+  } while (irData.cmd == keyOn);  //if it's the same key, go back and wait for another
+  keyOff = irData.cmd;
   Serial.print("(key cmd=");
   Serial.print(keyOff, HEX);
   Serial.println(")");
-  
+
   Serial.println();
   Serial.println("Hold the \"ON\" key to turn on the Built-in LED;");
   Serial.println("Hold the \"OFF\" key to turn off the Built-in LED;");
@@ -62,21 +61,18 @@ void setup() {
 }
 
 void loop() {
-  if(irDecoder.dataAvailable(irData)) {
+  if (irDecoder.dataAvailable(irData)) {
     if (irData.keyHeld) {
       if (keyReleased) {
         if (irData.cmd == keyOn) {
           Serial.print("ON ");
           digitalWrite(LED_BUILTIN, HIGH);
-        }
-        else if (irData.cmd == keyOff) {
+        } else if (irData.cmd == keyOff) {
           Serial.print("OFF ");
           digitalWrite(LED_BUILTIN, LOW);
         }
-        keyReleased=false;
+        keyReleased = false;
       }
-    }
-    else keyReleased=true;
+    } else keyReleased = true;
   }
 }
-

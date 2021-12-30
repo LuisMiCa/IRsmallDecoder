@@ -18,11 +18,11 @@
  * https://github.com/LuisMiCa/IRsmallDecoder
  * or the README.pdf file in the extras folder of this library. 
  */
- 
-#define IR_SMALLD_SIRC12     //1st: define which protocol to use and then,
-#include <IRsmallDecoder.h>  //2nd: include the library;
-IRsmallDecoder irDecoder(2); //3rd: create one decoder object with the correct digital pin;
-irSmallD_t irData;           //4th: declare one decoder data structure;
+
+#define IR_SMALLD_SIRC12      //1st: define which protocol to use and then,
+#include <IRsmallDecoder.h>   //2nd: include the library;
+IRsmallDecoder irDecoder(2);  //3rd: create one decoder object with the correct digital pin;
+irSmallD_t irData;            //4th: declare one decoder data structure;
 
 void setup() {
   Serial.begin(250000);
@@ -31,9 +31,9 @@ void setup() {
 }
 
 void loop() {
-  if(irDecoder.dataAvailable(irData)) {   //5th: if the decoder has some new data available,       
-    Serial.print(irData.addr,HEX);        //6th: do something with the data.
+  if (irDecoder.dataAvailable(irData)) {  //5th: if the decoder has some new data available,
+    Serial.print(irData.addr, HEX);       //6th: do something with the data.
     Serial.print("\t ");
-    Serial.println(irData.cmd,HEX);  
+    Serial.println(irData.cmd, HEX);
   }
 }

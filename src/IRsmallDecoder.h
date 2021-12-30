@@ -76,10 +76,10 @@ class IRsmallDecoder {
 //outside the class' forward declaration/definition (usually on the cpp file not the header)
 volatile bool IRsmallDecoder::_irDataAvailable = false;
 volatile irSmallD_t IRsmallDecoder::_irData;
-bool IRsmallDecoder::_irCopyingData = false; //to avoid volatile _irData corruption by the ISR
+bool IRsmallDecoder::_irCopyingData = false;  //to avoid volatile _irData corruption by the ISR
 
-IRsmallDecoder::IRsmallDecoder(uint8_t interruptPin){
-  pinMode(interruptPin,INPUT_PULLUP); //active low
+IRsmallDecoder::IRsmallDecoder(uint8_t interruptPin) {
+  pinMode(interruptPin,INPUT_PULLUP);  //active low
   #if defined(__AVR_ATtiny24__) || defined(__AVR_ATtiny44__) || defined(__AVR_ATtiny84__) || \
       defined(__AVR_ATtiny25__) || defined(__AVR_ATtiny45__) || defined(__AVR_ATtiny85__)
     _irInterruptNum=0;
@@ -100,15 +100,14 @@ void IRsmallDecoder::disable() {
   detachInterrupt(_irInterruptNum);
 }
 
-bool IRsmallDecoder::dataAvailable(irSmallD_t &irData){
+bool IRsmallDecoder::dataAvailable(irSmallD_t &irData) {
   if (_irDataAvailable) {
-    _irCopyingData=true; //Let the ISR know that it cannot change the data while it's being copied
+    _irCopyingData = true;  //Let the ISR know that it cannot change the data while it's being copied
     memcpy(&irData, (void*)&_irData, sizeof(_irData));
-    _irCopyingData=false; //an ATOMIC_BLOCK would be better, but it's not supported on many boards
-    _irDataAvailable=false;
+    _irCopyingData = false;  //an ATOMIC_BLOCK would be better, but it's not supported on many boards
+    _irDataAvailable = false;
     return true;
-  }
-  else return false;
+  } else return false;
 }
 
 bool IRsmallDecoder::dataAvailable() {

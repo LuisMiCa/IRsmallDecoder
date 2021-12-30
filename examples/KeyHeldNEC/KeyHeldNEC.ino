@@ -20,38 +20,36 @@
  * https://github.com/LuisMiCa/IRsmallDecoder
  * or the README.pdf file in the extras folder of this library. 
  */
- 
- 
+
 #define IR_SMALLD_NEC
 #include <IRsmallDecoder.h>
 IRsmallDecoder irDecoder(2);  //assuming that the IR sensor is connected to digital pin 2
 irSmallD_t irData;
 
-int value=0;
+int value = 0;
 int keyInc, keyDec;
 int rptCounter = 0;
 int increment = 1;
 
-  
 void setup() {
   Serial.begin(250000);
-  
+
   Serial.print("Press the \"UP\" key on the remote ");
-  while(!irDecoder.dataAvailable(irData)); //waiting for one keypress
-  keyInc=irData.cmd;
+  while (!irDecoder.dataAvailable(irData)) ;  //waiting for one keypress
+  keyInc = irData.cmd;
   Serial.print("(key cmd=");
   Serial.print(keyInc, HEX);
   Serial.println(")");
-  
+
   Serial.print("Press the \"DOWN\" key on the remote ");
-  do{
-    while(!irDecoder.dataAvailable(irData)); //waiting for another keypress
-  }while(irData.cmd == keyInc); //if it's the same key, go back and wait for another
-  keyDec=irData.cmd;
+  do {
+    while (!irDecoder.dataAvailable(irData)) ;  //waiting for another keypress
+  } while (irData.cmd == keyInc);  //if it's the same key, go back and wait for another
+  keyDec = irData.cmd;
   Serial.print("(key cmd=");
   Serial.print(keyDec, HEX);
   Serial.println(")");
-  
+
   Serial.println();
   Serial.println("Press the \"UP\" key to increase the value;");
   Serial.println("Press and hold it to increase faster and faster;");
@@ -60,26 +58,25 @@ void setup() {
   Serial.println();
 }
 
-
 void loop() {
-  if(irDecoder.dataAvailable(irData)) {    
-    if (irData.keyHeld && ((irData.cmd == keyInc) || (irData.cmd == keyDec))){
+  if (irDecoder.dataAvailable(irData)) {
+    if (irData.keyHeld && ((irData.cmd == keyInc) || (irData.cmd == keyDec))) {
       rptCounter++;
-      if (rptCounter < 10) increment=1;
-      else if (rptCounter < 28) increment=5;
-      else increment=25;
-    }
-    else{
+      if (rptCounter < 10) increment = 1;
+      else if (rptCounter < 28)
+        increment = 5;
+      else
+        increment = 25;
+    } else {
       rptCounter = 0;
       increment = 1;
     }
-    
-    if(irData.cmd == keyInc){
+
+    if (irData.cmd == keyInc) {
       value += increment;
       if (value > 1000) value = 1000;
       Serial.println(value);
-    }
-    else if(irData.cmd == keyDec){
+    } else if (irData.cmd == keyDec) {
       value -= increment;
       if (value < 0) value = 0;
       Serial.println(value);

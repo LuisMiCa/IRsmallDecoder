@@ -104,8 +104,8 @@ bool IRsmallDecoder::dataAvailable(irSmallD_t &irData) {
   if (_irDataAvailable) {
     _irCopyingData = true;  //Let the ISR know that it cannot change the data while it's being copied
     memcpy(&irData, (void*)&_irData, sizeof(_irData));
+    _irDataAvailable = false;   
     _irCopyingData = false;  //an ATOMIC_BLOCK would be better, but it's not supported on many boards
-    _irDataAvailable = false;
     return true;
   } else return false;
 }

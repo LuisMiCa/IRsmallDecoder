@@ -43,7 +43,9 @@
 #include "IRsmallDProtocolStructs.h"
 #include "IRsmallDDebug.h"
 
-// IR_ISR_MODE *****************************************************************
+
+// ****************************************************************************
+// IR_ISR_MODE definition based on protocol:
 #if IR_SMALLD_NEC || IR_SMALLD_NECx || IR_SMALLD_SAMSUNG || IR_SMALLD_SAMSUNG32
   #define IR_ISR_MODE  FALLING
 #elif IR_SMALLD_SIRC || IR_SMALLD_SIRC12 || IR_SMALLD_SIRC15 || IR_SMALLD_SIRC20
@@ -54,7 +56,10 @@
   #error IR_ISR_MODE not defined.
 #endif
 
-//*****************************************************************************
+
+// ****************************************************************************
+// Decoder class's forward declaration/definition:
+/** InfraRed Signals Decoder's Class */
 class IRsmallDecoder {
   private:
     static void irISR();
@@ -71,13 +76,22 @@ class IRsmallDecoder {
     bool dataAvailable();
 };
 
-//*****************************************************************************
+
+// ****************************************************************************
 //static variables from a class must be re-declared/initialized
 //outside the class' forward declaration/definition (usually in the cpp file not the header)
 volatile bool IRsmallDecoder::_irDataAvailable = false;
 volatile irSmallD_t IRsmallDecoder::_irData;
 bool IRsmallDecoder::_irCopyingData = false;  //to avoid volatile _irData corruption by the ISR
 
+
+// ****************************************************************************
+// Decoder's Methods Implementation
+/** 
+ * IRsmallDecoder object costructor
+ * 
+ * @param interruptPin is the digital pin where the IR sensor is connected. That pin must be is usable for external interrupts 
+ */
 IRsmallDecoder::IRsmallDecoder(uint8_t interruptPin) {
   pinMode(interruptPin,INPUT_PULLUP);  //active low
   #if defined(__AVR_ATtiny24__) || defined(__AVR_ATtiny44__) || defined(__AVR_ATtiny84__) || \
@@ -89,6 +103,10 @@ IRsmallDecoder::IRsmallDecoder(uint8_t interruptPin) {
   attachInterrupt(_irInterruptNum, irISR, IR_ISR_MODE);
 }
 
+
+/**
+ * Enables the decoder by reattaching the ISR to the hardware interrupt
+ */
 void IRsmallDecoder::enable() {
   attachInterrupt(_irInterruptNum, irISR, IR_ISR_MODE);  //interrupt flag may already be set
   //if so, ISR will be immediately executed and the FSM jumps out of standby state
@@ -96,10 +114,21 @@ void IRsmallDecoder::enable() {
   this->irISR();
 }
 
+
+/**
+ * Disables the decoder without interfering with other interrupts
+ */
 void IRsmallDecoder::disable() {
   detachInterrupt(_irInterruptNum);
 }
 
+
+/**
+ * Informs if there is new decoded data and retrieves it if so.
+ * 
+ * @param irData If there is new data available, it is "moved" to this data structure.
+ * @return true if new data was decoded and retrieved; false if not.
+ */
 bool IRsmallDecoder::dataAvailable(irSmallD_t &irData) {
   if (_irDataAvailable) {
     _irCopyingData = true;  //Let the ISR know that it cannot change the data while it's being copied
@@ -110,6 +139,12 @@ bool IRsmallDecoder::dataAvailable(irSmallD_t &irData) {
   } else return false;
 }
 
+
+/**
+ * Informs if there is new decoded data and DISCARDS it if so.
+ * 
+ * @return true if new data was decoded; false if not.
+ */
 bool IRsmallDecoder::dataAvailable() {
   if (_irDataAvailable) {
     _irDataAvailable = false;
@@ -117,14 +152,16 @@ bool IRsmallDecoder::dataAvailable() {
   } else return false;
 }
 
-//*****************************************************************************
+
+// ----------------------------------------------------------------------------
 // Computed GOTOs (labels as values) FSM control:
 #define FSM_INITIALIZE(initialState) static void* fsm_state = &&initialState
 #define FSM_SWITCH() goto *fsm_state; while(false)
 #define FSM_NEXT(nextState) fsm_state = &&nextState
 #define FSM_DIRECTJUMP(label) goto label
 
-//*****************************************************************************
+
+// ----------------------------------------------------------------------------
 // Conditional inclusion of protocol specific ISR implementations:
 #if IR_SMALLD_NEC || IR_SMALLD_NECx
   #include "IRsmallD_NEC.h"

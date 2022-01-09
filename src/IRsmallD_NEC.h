@@ -112,7 +112,7 @@ void IRsmallDecoder::irISR() { //executed every time the IR signal goes up (but 
         #if defined(IR_SMALLD_NEC) //Conditional code inclusion (at compile time)
           if (bitCount == 16) {    //Address and Reversed Address received
             if (irSignal.byt[2] != (uint8_t)~irSignal.byt[3]) state = 0;  //address error
-            else state = 2; //Address OK, continue with command reception
+            // else state = 2;  //Address OK, continue with command reception //(redundant assignment)
           }
           else   // that's right, a loose else...
     		#endif
@@ -132,7 +132,7 @@ void IRsmallDecoder::irISR() { //executed every time the IR signal goes up (but 
           }
           state = 0;
         }
-        else state = 2; //continue receiving
+        // else state = 2; //continue receiving //(redundant assignment)
       }
     break;
   }

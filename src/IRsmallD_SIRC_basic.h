@@ -127,7 +127,7 @@ void IRsmallDecoder::irISR() { //executed every time the IR signal goes down (bu
             _irDataAvailable = true;
           }
           state = 0; //done
-        } else state = 1;  //continue Receiving
+        } // else state = 1;  //continue Receiving  //(redundant assignment)
       }
     break;
   }

@@ -12,8 +12,8 @@
  *  - Hold the selected keys to turn on/off the built-in LED.
  *    If you keep holding, it won't do anything else.
  *
- * In this example it's assumed that the IR sensor is connected to digital pin 2 and 
- * the pin is usable for external interrupts.
+ * In this example it's assumed that the board has a builtin LED and the IR sensor is 
+ * connected to digital pin 2, which must be usable for external interrupts.
  * 
  * For more information on the boards' usable pins, see the library documentation at:
  * https://github.com/LuisMiCa/IRsmallDecoder

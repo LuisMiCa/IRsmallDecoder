@@ -8,7 +8,7 @@
  *  - The SAMSUNG32 protocol corresponds to the standard described in this application note:
  *    http://elektrolab.wz.cz/katalog/samsung_protocol.pdf
  *
- * In this example it's assumed that the IR sensor is connected to digital pin 2 and 
+ * In this example it's assumed that the IR receiver is connected to digital pin 2 and 
  * the pin is usable for external interrupts.
  * 
  * For more information on the boards' usable pins, see the library documentation at:

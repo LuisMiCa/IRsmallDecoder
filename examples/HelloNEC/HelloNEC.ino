@@ -3,7 +3,7 @@
  *
  * Note: for the NEC extended protocol, just define IR_SMALLD_NECx instead of IR_SMALLD_NEC 
  *
- * In this example it's assumed that the IR sensor is connected to digital pin 2 and 
+ * In this example it's assumed that the IR receiver is connected to digital pin 2 and 
  * the pin is usable for external interrupts.
  * 
  * For more information on the boards' usable pins, see the library documentation at:

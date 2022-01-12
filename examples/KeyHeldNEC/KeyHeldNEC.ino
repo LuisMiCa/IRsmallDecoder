@@ -4,17 +4,17 @@
  * a possible usage for the keyHeld data member.
  *  
  * How to use this sketch: 
- *  - Connect the sensor (see library documentation);
+ *  - Connect the IR receiver (see library documentation);
  *  - Upload the sketch and open the Serial Monitor;
  *  - "Teach the Arduino" which keys you want to use to increase or decrease a value: 
- *    point the NEC remote to the IR sensor and press any key of your choosing then press a different key;
+ *    point the NEC remote to the receiver and press any key of your choosing then press a different key;
  *  - Use the selected keys to increase/decrease the value, one unit at a time for each keypress,
  *    or, if you hold the key: 
  *      1 unit for each of the first 9 repeat codes; 
  *      5 units for each of the next 18 repeat codes;
  *      25 units for each of the subsequent repeat codes.
  *
- * In this example it's assumed that the IR sensor is connected to digital pin 2 and 
+ * In this example it's assumed that the IR receiver is connected to digital pin 2 and 
  * the pin is usable for external interrupts.
  * 
  * For more information on the boards' usable pins, see the library documentation at:
@@ -24,7 +24,7 @@
 
 #define IR_SMALLD_NEC
 #include <IRsmallDecoder.h>
-IRsmallDecoder irDecoder(2);  //assuming that the IR sensor is connected to digital pin 2
+IRsmallDecoder irDecoder(2);  //assuming that the IR receiver is connected to digital pin 2
 irSmallD_t irData;
 
 int value = 0;

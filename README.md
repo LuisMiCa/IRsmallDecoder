@@ -8,7 +8,7 @@ This is a Library for receiving and decoding IR signals from remote controls. Pe
 * [Main features](#main-features)
 * [Supported Protocols](#supported-protocols)
 * [Supported Boards](#supported-boards)
-* [Connecting the IR sensor](#connecting-the-ir-sensor)
+* [Connecting the IR receiver](#connecting-the-ir-receiver)
 * [Installing the library](#installing-the-library)
 * [Using the library](#using-the-library)
 * [Possible improvements](#possible-improvements)
@@ -16,7 +16,7 @@ This is a Library for receiving and decoding IR signals from remote controls. Pe
 * [Contact information](#contact-information)
 * [License](#license)
 * [Appendix A - Details about this library](#appendix-a---details-about-this-library)
-* [Appendix B - IR sensor connection details](#appendix-b---ir-sensor-connection-details)
+* [Appendix B - IR receiver connection details](#appendix-b---ir-receiver-connection-details)
 
 
 ## Main features
@@ -49,8 +49,8 @@ ATtiny 25/45/85/24/44/84 microcontrollers are supported.
 If you have problems with this library on some board, please submit an issue here: https://github.com/LuisMiCa/IRSmallDecoder/issues  or [contact me](#contact-information).
 
 
-## Connecting the IR sensor
-The sensor's output must be connected to one of the Arduino's digital pin that is usable for interrupts and, also, it must work with the CHANGE mode if the intended protocol uses this mode. (One example of a board that does not have CHANGE mode on some of the interrupt pins is the Arduino 101; and one protocol that uses that mode is the [RC5](#speed)).
+## Connecting the IR receiver
+The receiver's output must be connected to one of the Arduino's digital pin that is usable for interrupts and, also, it must work with the CHANGE mode if the intended protocol uses this mode. (One example of a board that does not have CHANGE mode on some of the interrupt pins is the Arduino 101; and one protocol that uses that mode is the [RC5](#speed)).
 
 | Board or microcontroller            | Usable digital pins numbers    |
 |-------------------------------------|--------------------------------|
@@ -70,7 +70,7 @@ The sensor's output must be connected to one of the Arduino's digital pin that i
 
 <sup>(Sources: <https://www.arduino.cc/reference/en/language/functions/external-interrupts/attachinterrupt/>; <http://highlowtech.org/?p=1695> and <https://github.com/SpenceKonde/ATTinyCore>)</sup>
 
-If you're not sure about how to connect the IR Sensor to the Arduino, go to: [IR sensor connection details](#appendix-b---ir-sensor-connection-details) at the end of this document.
+If you're not sure about how to connect the IR receiver to the Arduino, go to: [IR receiver connection details](#appendix-b---ir-receiver-connection-details) at the end of this document.
 
 
 ## Installing the library
@@ -107,7 +107,7 @@ before the
 
 Then you need to create **one** decoder object with the correct interrupt pin:
 ```ino
-IRsmallDecoder irDecoder(2); //IR sensor connected to pin 2 in this example
+IRsmallDecoder irDecoder(2); //IR receiver connected to pin 2 in this example
 ```
 
 And also a decoder data structure:
@@ -432,16 +432,16 @@ In order to make this library compatible with most of the Arduino boards, I didn
 ---
 <div style="page-break-after: always;"></div>
 
-## Appendix B - IR sensor connection details
+## Appendix B - IR receiver connection details
 
-If you are using a simple IR Receiver module the pinout order will be, most likely, `Vout Gnd Vcc` like in the the following examples:
+If you are using a simple IR receiver module the pinout order will be, most likely, `Vout Gnd Vcc` like in the the following examples:
 
-| ![](extras/IRsensors/PIC12043S.jpg) | ![](extras/IRsensors/TSOP48xx.jpg) |
+| ![](extras/IR%20receivers/PIC12043S.jpg) | ![](extras/IR%20receivers/TSOP48xx.jpg) |
 |-------------------------------------|------------------------------------|
 
-But beware, there are other IR Receivers with different pinouts, like these examples:
+But beware, there are other IR receivers with different pinouts, like these examples:
 
-| ![](extras/IRsensors/TSOP17xx.jpg) | ![](extras/IRsensors/SFH505A.jpg) |
+| ![](extras/IR%20receivers/TSOP17xx.jpg) | ![](extras/IR%20receivers/SFH505A.jpg) |
 |------------------------------------|-----------------------------------|
  
 <table> 
@@ -451,7 +451,7 @@ But beware, there are other IR Receivers with different pinouts, like these exam
     	     written on it (sometimes it's <br />
     	     DAT or S instead of Vout).
     	</td>
-    	<td> <img src="extras/IRsensors/IRModule.jpg" alt=""></img> </td>
+    	<td> <img src="extras/IR%20receivers/IRModule.jpg" alt=""></img> </td>
     </tr> </tbody> 
 </table>
 
@@ -461,13 +461,13 @@ The connection to the Arduino is very straightforward, just connect:
 - VCC to the Arduino's +5V or (+3.3V if you are using a board with lower operating voltage<sup>[2]</sup>);
 - GND to one of the Arduino's Ground connector.
  
-    <sup>[1] Go to [Connecting the IR sensor](#connecting-the-ir-sensor) for more information.</sup>  
-    <sup>[2] Note that not all IR Sensors can operate at low voltages.</sup> 
+    <sup>[1] Go to [Connecting the IR receiver](#connecting-the-ir-receiver) for more information.</sup>  
+    <sup>[2] Note that not all IR receivers can operate at low voltages.</sup> 
  
-Nearly all IR Sensor's datashets recommend the usage of an RC filter (R1, C1) at the power input, but it's not really necessary, (it's meant to suppress power supply disturbances):
+Nearly all IR receiver's datashets recommend the usage of an RC filter (R1, C1) at the power input, but it's not really necessary, (it's meant to suppress power supply disturbances):
 
-![](extras/IRsensors/IR%20Receiver%20Connections.jpg)
+![](extras/IR%20receivers/IR%20receiver%20connections.jpg)
 
-Note that most IR Receiver Test Modules already have that RC filter.
+Note that most IR receiver Test Modules already have that RC filter.
 
 

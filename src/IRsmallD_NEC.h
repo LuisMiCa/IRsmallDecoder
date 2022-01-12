@@ -36,7 +36,7 @@
  */
 
 
-void IRsmallDecoder::irISR() { //executed every time the IR signal goes up (but it's actually FALLING @ SensorOutput)
+void IRsmallDecoder::irISR() { //executed every time the IR signal goes up (but it's actually FALLING @ ReceiverOutput)
   // NEC timings in micro seconds:
   // Minimum Gap length = repeatPeriod - SignalFrame = 108000 - 67500 = 40500
   const uint16_t c_GapMin = 32400;  // = 40500 * 0.8 (20% less)

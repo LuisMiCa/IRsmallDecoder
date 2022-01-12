@@ -9,7 +9,7 @@
  *  - IR_SMALLD_SIRC12 will receive signals from SIRC15 and SIRC20, but the codes will not be correct;
  *  - In a similar way, IR_SMALLD_SIRC15 will receive signals from SIRC20, but not from SIRC12.
  *	
- * In this example it's assumed that the IR sensor is connected to digital pin 2 and 
+ * In this example it's assumed that the IR receiver is connected to digital pin 2 and 
  * the pin is usable for external interrupts.
  * 
  * For more information on the boards' usable pins, see the library documentation at:

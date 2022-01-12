@@ -4,7 +4,7 @@
  * a possible usage for the enable and disable methods of the decoder.
  *  
  * How to use this sketch: 
- *  - Connect the sensor (see library documentation);
+ *  - Connect the IR receiver (see library documentation);
  *  - Uncomment the #define for the desired protocol,
  *    (leave the others as comments, only one is allowed);
  *  - Upload the sketch and open the Serial Monitor;
@@ -12,7 +12,7 @@
  *  - The selected key will temporarily disable the decoder;
  *  - Any other key on the remote will toggle the builtin LED;
  *
- * In this example it's assumed that the board has a builtin LED and the IR sensor is 
+ * In this example it's assumed that the board has a builtin LED and the IR receiver is 
  * connected to digital pin 2, which must be usable for external interrupts.
  * 
  * For more information on the boards' usable pins, see the library documentation at:
@@ -33,7 +33,7 @@
 #include <IRsmallDecoder.h>
 #define TIMEOUT 8
 
-IRsmallDecoder irDecoder(2);  //assuming that the IR sensor is connected to digital pin 2
+IRsmallDecoder irDecoder(2);  //assuming that the IR receiver is connected to digital pin 2
 irSmallD_t irData;
 int ledState = LOW;
 int keyDisable;

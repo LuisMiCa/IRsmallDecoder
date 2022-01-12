@@ -3,7 +3,7 @@
  *
  * Note: this works for both RC5 and RC5 extended.
  *
- * In this example it's assumed that the IR sensor is connected to digital pin 2 and 
+ * In this example it's assumed that the IR receiver is connected to digital pin 2 and 
  * the pin is usable for external interrupts (that work with the CHANGE mode).
  * 
  * For more information on the boards' usable pins, see the library documentation at:

@@ -90,7 +90,7 @@ bool IRsmallDecoder::_irCopyingData = false;  //to avoid volatile _irData corrup
 /** 
  * IRsmallDecoder object costructor
  * 
- * @param interruptPin is the digital pin where the IR sensor is connected. That pin must be is usable for external interrupts 
+ * @param interruptPin is the digital pin where the IR receiver is connected. That pin must be is usable for external interrupts 
  */
 IRsmallDecoder::IRsmallDecoder(uint8_t interruptPin) {
   pinMode(interruptPin,INPUT_PULLUP);  //active low

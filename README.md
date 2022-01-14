@@ -1,7 +1,7 @@
 # IRsmallDecoder
  
 ## A small, fast and reliable infrared signals decoder, for controlling Arduino projects with remote controls.
- 
+
 This is a Library for receiving and decoding IR signals from remote controls. Perfect for your Arduino projects that need a fast, simple and reliable decoder, but don't require the usage of multiple different protocols at the same time and don't need to send IR signals.
 
 
@@ -125,6 +125,7 @@ Then you need to create **one** decoder object with the correct digital pin:
 ```ino
 IRsmallDecoder irDecoder(2); //IR receiver connected to pin 2 in this example
 ```
+<div style="page-break-after: always;"></div>
 
 And also a decoder data structure:
 ```ino
@@ -183,6 +184,7 @@ if (irData.addr == theRightAddr) {
 }
 ```
 
+<div style="page-break-after: always;"></div>
 
 ### The multifunctional *dataAvailable()* method
 The ```dataAvailable(irData)``` method combines the functionalities of 3 "fictitious" functions: *isDataAvailable()*, *getData()* and *setDataUnavailable()*. If there is some data available, already decoded, when ```irDecoder.dataAvailable(irData)``` is called:
@@ -213,6 +215,7 @@ Most of the decoders have the **keyHeld** variable (which is set to *true* when 
 The following table shows the number of bits used by each protocol and the datatypes of the data structure member variables:
 
 
+<div style="page-break-after: always;"></div>
 <div align=center>
 
 | Protocol  | keyHeld |     cmd    |    addr     |    ext     |
@@ -249,6 +252,8 @@ The following table shows the number of bits used by each protocol and the datat
 - The SIRC decoder could also return the number of detected bits (12, 15 or 20).
 - I have not finished redrawing the IR signals' graphs that would better explain the protocols' timings.
 
+<div style="page-break-after: always;"></div>
+
 
 ## Contributions
 So far, these releases were made without any significant contribution from other developers, but I do have to say that this work was inspired by some of the existing IR Libraries: [Arduino-IRremote][1], [IRLib2][2], [IRReadOnlyRemote][3], [Infrared4Arduino][4] and especially the [IRLremote][5], which was almost what I was looking for, but not quite... So I decided to make my own NEC decoder and then an RC5 and a SIRC. Finally I decided to put these decoders in a library, hoping that it will be useful to someone.
@@ -270,6 +275,7 @@ This library is licensed under the MIT license.
 See the LICENSE file for details.
 
 ---
+<div style="page-break-after: always;"></div>
 
 
 ## Appendix A - Details about this library
@@ -483,6 +489,7 @@ In order to make this library compatible with most of the Arduino boards, I didn
 
 
 ---
+<div style="page-break-after: always;"></div>
 
 
 ## Appendix B - IR receiver connection details
@@ -507,6 +514,7 @@ If you are using a test module, the pinout is usually written on it (sometimes i
 
 ![](extras/IR%20receivers/IRModule.jpg)![](extras/IR%20receivers/IRModuleS.jpg)
 </div>
+<div style="page-break-after: always;"></div>
 
 The connection to the Arduino is very straightforward, just connect:
 - OUT (or DAT or S) to one of the Arduino's digital pin that has interrupt capability<sup>\[1]</sup>;

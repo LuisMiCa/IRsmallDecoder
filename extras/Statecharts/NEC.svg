@@ -64,7 +64,7 @@
       <rect x="222.3212" width="519.458" height="83.5059" y="1599.7953" clip-path="url(#clipPath2)" stroke="none"/>
     </g>
     <g font-size="10px" stroke-linecap="butt" transform="matrix(1,0,0,1,-178,-1047)" text-rendering="geometricPrecision" font-family="sans-serif" shape-rendering="geometricPrecision" stroke-miterlimit="1.45">
-      <text x="227.3212" xml:space="preserve" y="1614.849" clip-path="url(#clipPath2)" stroke="none">d = duration of the interval between two consecutive falling edges of the IR signal (falling at the IR receiver output); </text>
+      <text x="227.3212" xml:space="preserve" y="1614.849" clip-path="url(#clipPath2)" stroke="none">d = duration of the interval between two consecutive rising edges of the IR signal (falling at the IR receiver output); </text>
       <text x="227.3212" xml:space="preserve" y="1627.1" clip-path="url(#clipPath2)" stroke="none">bc = bitCount;</text>
       <text x="227.3212" xml:space="preserve" y="1639.351" clip-path="url(#clipPath2)" stroke="none">M0 and M1 are bit 0 and bit 1 marks:</text>
       <text x="227.3212" xml:space="preserve" y="1651.6019" clip-path="url(#clipPath2)" stroke="none">‣ M0: [d&gt;=M0min &amp;&amp; d&lt;=M0max]</text>

@@ -1,4 +1,4 @@
-/* IRsmallDecoder v1.1.0
+/* IRsmallDecoder v1.2.0
  *
  * This is a Library for Arduino and it allows the reception and decoding of infrared signals from remote controls.
  * It uses small, fast and reliable decoders that don't require timers. 
@@ -24,8 +24,8 @@
  *
  * - RC5 works for both normal and extended versions;
  * - SIRC12, SIRC15 and SIRC20 use a basic (smaller and faster) implementation but without some features...
- * - SIRC handles SIRC 12, 15 and 20 bits, by taking advantage of the fact that most Sony remotes;
- *   send three frames each time one button is pressed. It uses triple frame verification and checks if keyHeld;
+ * - SIRC handles SIRC 12, 15 and 20 bits, by taking advantage of the fact that most Sony remotes send
+ *   three frames each time one button is pressed. It uses triple frame verification and checks if keyHeld;
  */
 
 #ifndef IRsmallDecoder_h
@@ -43,7 +43,9 @@
 #include "IRsmallDProtocolStructs.h"
 #include "IRsmallDDebug.h"
 
-// IR_ISR_MODE *****************************************************************
+
+// ****************************************************************************
+// IR_ISR_MODE definition based on protocol:
 #if IR_SMALLD_NEC || IR_SMALLD_NECx || IR_SMALLD_SAMSUNG || IR_SMALLD_SAMSUNG32
   #define IR_ISR_MODE  FALLING
 #elif IR_SMALLD_SIRC || IR_SMALLD_SIRC12 || IR_SMALLD_SIRC15 || IR_SMALLD_SIRC20
@@ -54,56 +56,112 @@
   #error IR_ISR_MODE not defined.
 #endif
 
-//*****************************************************************************
+
+// ****************************************************************************
+// Decoder class's forward declaration/definition:
+/** InfraRed Signals Decoder's Class */
 class IRsmallDecoder {
   private:
-    static volatile bool _irDataAvailable; //will be updated by the ISR
-    static volatile irSmallD_t _irData;    //will be updated by the ISR
-    static bool _irCopyingData; //not changed by the ISR, no need for volatile
     static void irISR();
+    static volatile bool _irDataAvailable;  //will be updated by the ISR
+    static volatile irSmallD_t _irData;     //will be updated by the ISR
+    static bool _irCopyingData;             //used by the ISR but not changed by it, no need for volatile
+    uint8_t _irInterruptNum;                //used by enable/disable Decoder methods
     
   public:
     IRsmallDecoder(uint8_t interruptPin);
+    void disable();
+    void enable(); 
     bool dataAvailable(irSmallD_t &irData);
+    bool dataAvailable();
 };
 
-//*****************************************************************************
+
+// ****************************************************************************
 //static variables from a class must be re-declared/initialized
-//outside the class' forward declaration/definition (usually on the cpp file not the header)
+//outside the class' forward declaration/definition (usually in the cpp file not the header)
 volatile bool IRsmallDecoder::_irDataAvailable = false;
 volatile irSmallD_t IRsmallDecoder::_irData;
-bool IRsmallDecoder::_irCopyingData = false; //to avoid volatile _irData corruption by the ISR
+bool IRsmallDecoder::_irCopyingData = false;  //to avoid volatile _irData corruption by the ISR
 
-IRsmallDecoder::IRsmallDecoder(uint8_t interruptPin){
-  pinMode(interruptPin,INPUT_PULLUP); //active low
+
+// ****************************************************************************
+// Decoder's Methods Implementation
+/** 
+ * IRsmallDecoder object costructor
+ * 
+ * @param interruptPin is the digital pin where the IR receiver is connected. That pin must be is usable for external interrupts 
+ */
+IRsmallDecoder::IRsmallDecoder(uint8_t interruptPin) {
+  pinMode(interruptPin,INPUT_PULLUP);  //active low
   #if defined(__AVR_ATtiny24__) || defined(__AVR_ATtiny44__) || defined(__AVR_ATtiny84__) || \
       defined(__AVR_ATtiny25__) || defined(__AVR_ATtiny45__) || defined(__AVR_ATtiny85__)
-    attachInterrupt(0, irISR, IR_ISR_MODE);
-  #else  
-    attachInterrupt(digitalPinToInterrupt(interruptPin), irISR, IR_ISR_MODE);
+    _irInterruptNum=0;
+  #else
+    _irInterruptNum = digitalPinToInterrupt(interruptPin);
   #endif
+  attachInterrupt(_irInterruptNum, irISR, IR_ISR_MODE);
 }
 
-bool IRsmallDecoder::dataAvailable(irSmallD_t &irData){
+
+/**
+ * Enables the decoder by reattaching the ISR to the hardware interrupt
+ */
+void IRsmallDecoder::enable() {
+  attachInterrupt(_irInterruptNum, irISR, IR_ISR_MODE);  //interrupt flag may already be set
+  //if so, ISR will be immediately executed and the FSM jumps out of standby state
+  this->irISR();  // two consecutive calls will place any of the FSMs in standby
+  this->irISR();
+}
+
+
+/**
+ * Disables the decoder without interfering with other interrupts
+ */
+void IRsmallDecoder::disable() {
+  detachInterrupt(_irInterruptNum);
+}
+
+
+/**
+ * Informs if there is new decoded data and retrieves it if so.
+ * 
+ * @param irData If there is new data available, it is "moved" to this data structure.
+ * @return true if new data was decoded and retrieved; false if not.
+ */
+bool IRsmallDecoder::dataAvailable(irSmallD_t &irData) {
   if (_irDataAvailable) {
-    _irCopyingData=true; //Let the ISR know that it cannot change the data while it's being copied
-    memcpy(&irData, (void*)&_irData, sizeof(_irData));   
-    _irCopyingData=false; //an ATOMIC_BLOCK would be better, but it's not supported on many boards
-    _irDataAvailable=false;    
+    _irCopyingData = true;  //Let the ISR know that it cannot change the data while it's being copied
+    memcpy(&irData, (void*)&_irData, sizeof(_irData));
+    _irDataAvailable = false;   
+    _irCopyingData = false;  //an ATOMIC_BLOCK would be better, but it's not supported on many boards
     return true;
-  }
-  else return false;
+  } else return false;
 }
 
 
-//*****************************************************************************
+/**
+ * Informs if there is new decoded data and DISCARDS it if so.
+ * 
+ * @return true if new data was decoded; false if not.
+ */
+bool IRsmallDecoder::dataAvailable() {
+  if (_irDataAvailable) {
+    _irDataAvailable = false;
+    return true;
+  } else return false;
+}
+
+
+// ----------------------------------------------------------------------------
 // Computed GOTOs (labels as values) FSM control:
 #define FSM_INITIALIZE(initialState) static void* fsm_state = &&initialState
 #define FSM_SWITCH() goto *fsm_state; while(false)
 #define FSM_NEXT(nextState) fsm_state = &&nextState
 #define FSM_DIRECTJUMP(label) goto label
 
-//*****************************************************************************
+
+// ----------------------------------------------------------------------------
 // Conditional inclusion of protocol specific ISR implementations:
 #if IR_SMALLD_NEC || IR_SMALLD_NECx
   #include "IRsmallD_NEC.h"

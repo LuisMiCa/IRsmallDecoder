@@ -200,7 +200,7 @@ If you want to check if any key was pressed and don't care about the data, you c
 
 
 ### Disabling the decoder 
-If you don't want to receive IR codes when they are not needed or if you want to prevent possible interferences in time critical functions by the decoders' interrupts, you can use the ```disable()``` and ```enable()``` methods. The [TemporaryDisable](https://github.com/LuisMiCa/IRsmallDecoder/blob/master/examples/ToggleLED/TemporaryDisable.ino) example demonstrates a possible usage for these methods.
+If you don't want to receive IR codes when they are not needed or if you want to prevent possible interferences in time critical functions by the decoders' interrupts, you can use the ```disable()``` and ```enable()``` methods. The [TemporaryDisable](https://github.com/LuisMiCa/IRsmallDecoder/blob/master/examples/TemporaryDisable/TemporaryDisable.ino) example demonstrates a possible usage for these methods.
 
 The ```enable()``` method also resets the decoder after reenabling it. This is useful if you have to temporarily disable all interrupts or need to use a library that does that. If you don't reset the decoder after re-enabling all interrupts, the next IR signal may not be recognized if the IR receiver detected some signal while the interrupts where disabled.
 

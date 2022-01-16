@@ -18,8 +18,8 @@
  */
 
 
-#define IR_SMALLD_SIRC12      //1st: define which protocol to use;
-//#define IR_SMALLD_SIRC15
+#define IR_SMALLD_SIRC12      //1st: define which protocol to use
+//#define IR_SMALLD_SIRC15    //     (only one of these 3);
 //#define IR_SMALLD_SIRC20
 
 #include <IRsmallDecoder.h>   //2nd: include the library;

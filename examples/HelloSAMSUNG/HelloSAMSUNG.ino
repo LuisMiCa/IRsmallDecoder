@@ -16,7 +16,8 @@
  * or the README.pdf file in the extras folder of this library. 
  */
 
-#define IR_SMALLD_SAMSUNG     //1st: define which protocol to use and then,
+#define IR_SMALLD_SAMSUNG     //1st: define which protocol to use:
+//#define IR_SMALLD_SAMSUNG32 //     IR_SMALLD_SAMSUNG or IR_SMALLD_SAMSUNG32, (not both);
 #include <IRsmallDecoder.h>   //2nd: include the library;
 IRsmallDecoder irDecoder(2);  //3rd: create one decoder object with the correct interrupt pin;
 irSmallD_t irData;            //4th: declare one decoder data structure;

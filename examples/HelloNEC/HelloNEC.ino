@@ -11,8 +11,8 @@
  * or the README.pdf file in the extras folder of this library. 
  */
 
-#define IR_SMALLD_NEC         //1st: define which protocol to use and then,
-//#define IR_SMALLD_NECx
+#define IR_SMALLD_NEC         //1st: define which protocol to use:
+//#define IR_SMALLD_NECx      //     IR_SMALLD_NEC or IR_SMALLD_NECx, (not both);
 #include <IRsmallDecoder.h>   //2nd: include the library;
 IRsmallDecoder irDecoder(2);  //3rd: create one decoder object with the correct digital pin;
 irSmallD_t irData;            //4th: declare one decoder data structure;

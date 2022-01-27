@@ -46,9 +46,10 @@
 
 // ****************************************************************************
 // IR_ISR_MODE definition based on protocol:
-#if IR_SMALLD_NEC || IR_SMALLD_NECx || IR_SMALLD_SAMSUNG || IR_SMALLD_SAMSUNG32
+#if IR_SMALLD_SAMSUNG || IR_SMALLD_SAMSUNG32
   #define IR_ISR_MODE  FALLING
-#elif IR_SMALLD_SIRC || IR_SMALLD_SIRC12 || IR_SMALLD_SIRC15 || IR_SMALLD_SIRC20
+#elif IR_SMALLD_SIRC12 || IR_SMALLD_SIRC15 || IR_SMALLD_SIRC20 || \
+      IR_SMALLD_SIRC   || IR_SMALLD_NEC    || IR_SMALLD_NECx
   #define IR_ISR_MODE  RISING
 #elif IR_SMALLD_RC5
   #define IR_ISR_MODE  CHANGE

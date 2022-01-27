@@ -383,7 +383,7 @@ Although my main goals are functionality and small size, I believe this library 
 <tbody>
 	<tr>
 		<td>NEC</td>
-		<td>FALLING</td>
+		<td>RISING</td>
 		<td>11.4 &#181;s</td>
 		<td>13 &#181;s</td>
 		<td>34</td>
@@ -391,7 +391,7 @@ Although my main goals are functionality and small size, I believe this library 
 	</tr>
 	<tr>
 		<td>NECx</td>
-		<td>FALLING</td>
+		<td>RISING</td>
 		<td>10.9 &#181;s</td>
 		<td>13 &#181;s</td>
 		<td>34</td>

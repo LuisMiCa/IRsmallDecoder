@@ -36,26 +36,31 @@
  */
 
 
-void IRsmallDecoder::irISR() { //executed every time the IR signal goes up (but it's actually FALLING @ ReceiverOutput)
-  // NEC timings in micro seconds:
-  // Minimum Gap length = repeatPeriod - SignalFrame = 108000 - 67500 = 40500
-  const uint16_t c_GapMin = 32400;  // = 40500 * 0.8 (20% less)
-  // Leading Mark Length = Leading pulse + leading space = 9000 + 4500 = 13500
-  // Repeat Mark Length  = Repeat Pulse  + Repeat Space  = 9000 + 2250 = 11250
-  // max tolerance = (13500 - 11250)/2 = 1125
-  const uint16_t c_LMmax = 14625;  // = 13500 + 1125 (it could be more)
-  const uint16_t c_LMmin = 12375;  // = 13500 - 1125
-  const uint16_t c_RMmax = 12374;  // = 11250 + 1125 - 1
-  const uint16_t c_RMmin = 10125;  // = 11250 - 1125 (it could be less)
-  //Bit 0 Mark length = 562.5µs pulse + 562.5µs space = 1125
-  //Bit 1 Mark length = 562.5µs pulse + 3 * 562.5µs space = 2250
-  //max tolerance = (2250 - 1125)/2 = 562.5 = bit pulse
-  const uint16_t c_M1max = 2812;     // = 2250 + 562 (it could be more)
-  const uint16_t c_M1min = 1688;     // = 2250 - 562
-  //const uint16_t c_M0max = 1687;   // = 1125 + 562    //not needed...
-  const uint16_t c_M0min  = 563;     // = 1125 - 562 (it could be less)
-  const uint32_t c_GapMax = 106425;  //= (108000-11250) * 1.1; // 10% above gap between 2 consecutive repeat marks
-  //number of initial repeats to be ignored:
+// NEC/NECx timings in microseconds:
+#define NEC_L_MARK 5062.5  /* Leading Mark */
+#define NEC_R_MARK 2812.5  /* Repeat Mark */
+#define NEC_R_TOL   803.6  /* Repeat Mark tolerance (µs) */
+#define NEC_MARK_0  1125   /* Bit 0 Mark */
+#define NEC_MARK_1  2250   /* Bit 1 Mark */
+#define NEC_GAP_1  48937.5 /* Gap1 (before first repeat mark) */
+#define NEC_GAP_2 105187.5 /* Gap2 (between repeat marks */
+// For more information about these timings, go to:
+// https://github.com/LuisMiCa/IRsmallDecoder/blob/master/extras/Timings/NEC_timings.svg
+
+
+void IRsmallDecoder::irISR() { //executed every time the IR signal goes down (but it's actually RISING @ ReceiverOutput)
+  const uint16_t c_GapMin = NEC_GAP_1 * 0.7;        // 34256
+  const uint32_t c_GapMax = NEC_GAP_2 * 1.3;        //136743
+  const uint16_t c_RMmin = NEC_R_MARK * 0.7;        //  1968
+  const uint16_t c_RMmax = NEC_R_MARK + NEC_R_TOL;  //  3616
+  const uint16_t c_LMmin = c_RMmax + 1;             //  3617
+  const uint16_t c_LMmax = NEC_L_MARK * 1.3;        //  6581
+  const uint16_t c_M1min = NEC_MARK_1 * 0.7;        //  1575
+  const uint16_t c_M1max = NEC_MARK_1 * 1.3;        //  2925
+  const uint16_t c_M0min = NEC_MARK_0 * 0.7;        //   787
+  const uint16_t c_M0max = NEC_MARK_0 * 1.3;        //  1462
+
+  //number of initial repetition marks to be ignored:
   const uint8_t c_RptCount = 2;
 
   // FSM variables:

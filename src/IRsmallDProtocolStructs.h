@@ -7,34 +7,34 @@
 #ifndef IRsmallD_ProtocolStructs_h
 #define IRsmallD_ProtocolStructs_h
 
-  #if IR_SMALLD_NEC || IR_SMALLD_RC5 || IR_SMALLD_SAMSUNG32
+  #if defined(IR_SMALLD_NEC) || defined(IR_SMALLD_RC5) || defined(IR_SMALLD_SAMSUNG32)
     struct irSmallD_t {
       uint8_t addr;
       uint8_t cmd;
       bool    keyHeld;
     };
 
-  #elif IR_SMALLD_NECx || IR_SMALLD_SAMSUNG
+  #elif defined(IR_SMALLD_NECx) || defined(IR_SMALLD_SAMSUNG)
     struct irSmallD_t {
       uint16_t addr;
       uint8_t  cmd;
       bool     keyHeld;
     };
 
-  #elif IR_SMALLD_SIRC12 || IR_SMALLD_SIRC15
+  #elif defined(IR_SMALLD_SIRC12) || defined(IR_SMALLD_SIRC15)
     struct irSmallD_t {
       uint8_t addr;
       uint8_t cmd;
     };
 
-  #elif IR_SMALLD_SIRC20
+  #elif defined(IR_SMALLD_SIRC20)
     struct irSmallD_t {
       uint8_t ext;  //extended data
       uint8_t addr;
       uint8_t cmd;
     };
 
-  #elif IR_SMALLD_SIRC
+  #elif defined(IR_SMALLD_SIRC)
     struct irSmallD_t {
       uint8_t ext;
       uint8_t addr;

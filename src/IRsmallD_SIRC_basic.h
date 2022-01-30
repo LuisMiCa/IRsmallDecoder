@@ -70,7 +70,7 @@ void IRsmallDecoder::irISR() { //executed every time the IR signal goes down (bu
   static uint8_t bitCount;
   static unsigned long startTime = -1;  //FFFF...
   static union {  //received bits are stored in reversed order (11000101... -> ...10100011)
-    #if (IR_SMALLD_SIRC12 || IR_SMALLD_SIRC15)
+    #if defined(IR_SMALLD_SIRC12) || defined(IR_SMALLD_SIRC15)
       uint16_t all = 0;  //Arduino uses Little Endian so, if all=ABCD then in memory it's CDAB (hex format)
       uint8_t byt[2];    //then we get byt[0]=CD and byt[1]=AB (type punning with a union...)
     #else                //it must be IR_SMALLD_SIRC20
@@ -101,7 +101,7 @@ void IRsmallDecoder::irISR() { //executed every time the IR signal goes down (bu
         irSignal.all >>= 1; //push a 0 from left to right (will be left at 0 if it's M0)
         bitCount++;
         if (duration >= c_M1min) { //it's a bit 1 mark, change Most Significant bit to 1
-          #if (IR_SMALLD_SIRC12 || IR_SMALLD_SIRC15)
+          #if defined(IR_SMALLD_SIRC12) || defined(IR_SMALLD_SIRC15)
             irSignal.byt[1] |= 0x80;
           #else  //IR_SMALLD_SIRC20 uses 4 bytes
             irSignal.byt[3] |= 0x80;
@@ -112,7 +112,7 @@ void IRsmallDecoder::irISR() { //executed every time the IR signal goes down (bu
             #if defined(IR_SMALLD_SIRC12)
               irSignal.all >>= 3;          //adjust address in the high byte (SIRC15/20 don't need this)
             #endif
-            #if (IR_SMALLD_SIRC12 || IR_SMALLD_SIRC15)
+            #if defined(IR_SMALLD_SIRC12) || defined(IR_SMALLD_SIRC15)
               irSignal.byt[0] >>= 1;           //adjust command in the low byte
               _irData.addr = irSignal.byt[1];  //Little-Endian puts high byte in the array's second position
               _irData.cmd  = irSignal.byt[0];

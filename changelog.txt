@@ -1,6 +1,13 @@
 IRsmallDecoder
 ==============
 
+v1.2.1 (2022-01-30)
+-------------------
+ * Increased the NEC/NECx decoder tolerances (issue #6)
+ * Added NEC protocol timing graphs to extras folder
+ * Improved the debugging features
+
+
 v1.2.0 (2022-01-16)
 -------------------
  * Added the dataAvailable() overload method

@@ -383,16 +383,16 @@ Although my main goals are functionality and small size, I believe this library 
 <tbody>
 	<tr>
 		<td>NEC</td>
-		<td>FALLING</td>
-		<td>11.4 &#181;s</td>
+		<td>RISING</td>
+		<td>11.35 &#181;s</td>
 		<td>13 &#181;s</td>
 		<td>34</td>
 		<td>67.5ms</td>
 	</tr>
 	<tr>
 		<td>NECx</td>
-		<td>FALLING</td>
-		<td>10.9 &#181;s</td>
+		<td>RISING</td>
+		<td>10.90 &#181;s</td>
 		<td>13 &#181;s</td>
 		<td>34</td>
 		<td>67.5ms</td>
@@ -400,7 +400,7 @@ Although my main goals are functionality and small size, I believe this library 
 	<tr>
 		<td>RC5</td>
 		<td>CHANGE</td>
-		<td>10.4 &#181;s</td>
+		<td>10.44 &#181;s</td>
 		<td>17 &#181;s</td>
 		<td>14 to 28</td>
 		<td>24.9ms</td>
@@ -408,7 +408,7 @@ Although my main goals are functionality and small size, I believe this library 
 	<tr>
 		<td>SIRC12</td>
 		<td>RISING</td>
-		<td>10.3 &#181;s</td>
+		<td>10.44 &#181;s</td>
 		<td>13 &#181;s</td>
 		<td>3*13</td>
 		<td>3*(17.4 to 24.6)ms</td>
@@ -416,7 +416,7 @@ Although my main goals are functionality and small size, I believe this library 
 	<tr>
 		<td>SIRC15</td>
 		<td>RISING</td>
-		<td>10.5 &#181;s</td>
+		<td>10.51 &#181;s</td>
 		<td>12 &#181;s</td>
 		<td>3*16</td>
 		<td>3*(21 to 30)ms</td>
@@ -424,7 +424,7 @@ Although my main goals are functionality and small size, I believe this library 
 	<tr>
 		<td>SIRC20</td>
 		<td>RISING</td>
-		<td>11.1 &#181;s</td>
+		<td>11.10 &#181;s</td>
 		<td>15 &#181;s</td>
 		<td>3*21</td>
 		<td>3*(27 to 39)ms</td>
@@ -432,7 +432,7 @@ Although my main goals are functionality and small size, I believe this library 
 	<tr>
 		<td>SIRC</td>
 		<td>RISING</td>
-		<td>11.7 &#181;s</td>
+		<td>11.70 &#181;s</td>
 		<td>17 &#181;s</td>
 		<td>39, 48 or 63</td>
 		<td>3*(17.4 to 39)ms</td>
@@ -440,7 +440,7 @@ Although my main goals are functionality and small size, I believe this library 
 	<tr>
 		<td>SAMSUNG</td>
 		<td>FALLING</td>
-		<td>11.0 &#181;s</td>
+		<td>10.99 &#181;s</td>
 		<td>13 &#181;s</td>
 		<td>2*22</td>
 		<td>2*(32.1 to 54.6)ms</td>
@@ -448,7 +448,7 @@ Although my main goals are functionality and small size, I believe this library 
 	<tr>
 		<td>SAMSUNG32</td>
 		<td>FALLING</td>
-		<td>11.0 &#181;s</td>
+		<td>10.97 &#181;s</td>
 		<td>14 &#181;s</td>
 		<td>34</td>
 		<td>(54.6 to 72.6)ms</td>

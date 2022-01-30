@@ -1,4 +1,4 @@
-/* IRsmallDecoder v1.2.0
+/* IRsmallDecoder v1.2.1
  *
  * This is a Library for Arduino and it allows the reception and decoding of infrared signals from remote controls.
  * It uses small, fast and reliable decoders that don't require timers. 
@@ -46,9 +46,10 @@
 
 // ****************************************************************************
 // IR_ISR_MODE definition based on protocol:
-#if IR_SMALLD_NEC || IR_SMALLD_NECx || IR_SMALLD_SAMSUNG || IR_SMALLD_SAMSUNG32
+#if defined(IR_SMALLD_SAMSUNG) || defined(IR_SMALLD_SAMSUNG32)
   #define IR_ISR_MODE  FALLING
-#elif IR_SMALLD_SIRC || IR_SMALLD_SIRC12 || IR_SMALLD_SIRC15 || IR_SMALLD_SIRC20
+#elif defined(IR_SMALLD_SIRC12) || defined(IR_SMALLD_SIRC15) || defined(IR_SMALLD_SIRC20) || \
+      defined(IR_SMALLD_SIRC)   || defined(IR_SMALLD_NEC)    || defined(IR_SMALLD_NECx)
   #define IR_ISR_MODE  RISING
 #elif IR_SMALLD_RC5
   #define IR_ISR_MODE  CHANGE
@@ -163,7 +164,7 @@ bool IRsmallDecoder::dataAvailable() {
 
 // ----------------------------------------------------------------------------
 // Conditional inclusion of protocol specific ISR implementations:
-#if IR_SMALLD_NEC || IR_SMALLD_NECx
+#if defined(IR_SMALLD_NEC) || defined(IR_SMALLD_NECx)
   #include "IRsmallD_NEC.h"
 #elif IR_SMALLD_RC5
   #include "IRsmallD_RC5.h"

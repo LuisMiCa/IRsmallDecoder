@@ -89,7 +89,7 @@ bool IRsmallDecoder::_irCopyingData = false;  //to avoid volatile _irData corrup
 // ****************************************************************************
 // Decoder's Methods Implementation
 /** 
- * IRsmallDecoder object costructor
+ * IRsmallDecoder object constructor
  * 
  * @param interruptPin is the digital pin where the IR receiver is connected. That pin must be is usable for external interrupts 
  */

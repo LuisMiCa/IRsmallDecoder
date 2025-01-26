@@ -58,7 +58,7 @@ void IRsmallDecoder::irISR() { //executed every time the IR signal goes down (bu
   const uint16_t c_M1min = NEC_MARK_1 * 0.7;        //  1575
   const uint16_t c_M1max = NEC_MARK_1 * 1.3;        //  2925
   const uint16_t c_M0min = NEC_MARK_0 * 0.7;        //   787
-  const uint16_t c_M0max = NEC_MARK_0 * 1.3;        //  1462
+  //const uint16_t c_M0max = NEC_MARK_0 * 1.3;      //  1462 // unused constant
 
   //number of initial repetition marks to be ignored:
   const uint8_t c_RptCount = 2;
@@ -92,12 +92,12 @@ void IRsmallDecoder::irISR() { //executed every time the IR signal goes down (bu
     break;
 
     case 1:  //startPulse:
-      if (duration >= c_LMmin && duration <= c_LMmax) {  //its a Leading Mark
+      if (duration >= c_LMmin && duration <= c_LMmax) {  //it's a Leading Mark
         bitCount = 0;
         repeatCount = 0;
         state = 2;
       } else {
-        if (possiblyHeld && duration >= c_RMmin && duration <= c_RMmax) {  //its a Repeat Mark
+        if (possiblyHeld && duration >= c_RMmin && duration <= c_RMmax) {  //it's a Repeat Mark
           if (repeatCount < c_RptCount) repeatCount++;  //first repeat signals will be ignored
           else if (!_irCopyingData) {                   //if not interrupting a copy...
             _irData.keyHeld = true;
@@ -115,7 +115,7 @@ void IRsmallDecoder::irISR() { //executed every time the IR signal goes down (bu
         if (duration >= c_M1min) irSignal.byt[3] |= 0x80; //it's M1, change MSB to 1
         bitCount++;
         #if defined(IR_SMALLD_NEC) //Conditional code inclusion (at compile time)
-          if (bitCount == 16) {    //Address and Reversed Address received
+          if (bitCount == 16) {    //Address and Inverted Address received
             if (irSignal.byt[2] != (uint8_t)~irSignal.byt[3]) state = 0;  //address error
             // else state = 2;  //Address OK, continue with command reception //(redundant assignment)
           }

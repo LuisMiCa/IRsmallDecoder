@@ -22,7 +22,7 @@
  *      8 bit Address            same 8 bit Address           8 bit Command             Command Complement
  *  A0 A1 A2 A3 A4 A5 A6 A7    A0 A1 A2 A3 A4 A5 A6 A7    C0 C1 C2 C3 C4 C5 C6 C7    ~C0~C1~C2~C3~C4~C5~C6~C7  
  *
- * (Source: http://elektrolab.wz.cz/katalog/samsung_protocol.pdf)
+ * (Source: https://www.scribd.com/doc/283100715/S3F80KB-RemoteController-an-REV000-090108-0)
  *
  */
  

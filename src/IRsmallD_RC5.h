@@ -57,7 +57,7 @@ void IRsmallDecoder::irISR() { //executed every time the IR signal changes (caut
     //====== States: st_standby, st_roseInSync, st_roseOffSync, st_fellInSync, st_fellOffSync
     st_standby:
       DBG_PRINT_STATE(0);
-      if (duration >= c_gapMin) {  //start pulse detected. It's very unlikely that a pulse will be longer than c_gapMin
+      if (duration >= c_gapMin) {  //start pulse detected. It's very unlikely that a non-start pulse will be longer than c_gapMin
         bitCount = 0;
         irSignal = 0;
         FSM_NEXT(st_roseInSync);

@@ -114,7 +114,7 @@ void IRsmallDecoder::irISR() { //executed every time the IR signal goes UP (but 
           }
           state = 0;     //done
         }
-        //else state=2;  //stay in same state
+        //else state=2;  //stay in the same state
       }
     break;
   }

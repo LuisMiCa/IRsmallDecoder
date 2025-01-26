@@ -1,6 +1,6 @@
 /* Single Hold 
  *  
- * This example is part of the the IRsmallDecoder library and is intended to demonstrate 
+ * This example is part of the IRsmallDecoder library and is intended to demonstrate 
  * a possible usage for the keyHeld data member.
  *  
  * How to use this sketch: 

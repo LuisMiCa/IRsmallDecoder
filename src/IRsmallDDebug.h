@@ -11,16 +11,15 @@
  *   IRSMALLD_DEBUG_ISRAVG   - Prints the average of the ISR execution time (in µs)
  * 
  * NOTES:
- * - The usage of debuging functionalities requires a Serial.begin in the setup;
+ * - The usage of debugging functionalities requires a Serial.begin in the setup;
  * - The serial communication speed must be high, to avoid timing errors;
  *   A Baud Rate of 250000 seems to work;
  * - The usage of Serial communications inside an interrupt is not recommended, but 
- *   in this case, it's just a few prints for debuging purposes.
+ *   in this case, it's just a few prints for debugging purposes.
  * - IRSMALLD_DEBUG_ISRTIME mode uses AVR 328p Timer1 hardware specific code;
  *   Results are in microseconds, assuming a 16MHz clock (Clk Count is divided by 16 to get µs);
  * - IRSMALLD_DEBUG_ISRAVG shows the average of all ISR execution times since the last reset.
  *   To restart the average calculation you'll need to reset the Arduino or restart the serial monitor.
- *   You need to accumulator and counter used to calculate the average, you need to reset the Arduino.
  */
 
 

@@ -1,6 +1,6 @@
 /* Temporarily disable the decoder
  *  
- * This example is part of the the IRsmallDecoder library and is intended to demonstrate 
+ * This example is part of the IRsmallDecoder library and is intended to demonstrate 
  * a possible usage for the enable and disable methods of the decoder.
  *  
  * How to use this sketch: 

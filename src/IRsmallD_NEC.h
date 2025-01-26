@@ -120,8 +120,8 @@ void IRsmallDecoder::irISR() { //executed every time the IR signal goes down (bu
             // else state = 2;  //Address OK, continue with command reception //(redundant assignment)
           }
           else   // that's right, a loose else...
-    		#endif
-  		  if (bitCount == 32) { //all bits received
+        #endif
+        if (bitCount == 32) { //all bits received
           if (!_irCopyingData && (irSignal.byt[2] == (uint8_t)~irSignal.byt[3])) { //if not interrupting a copy and command OK, finish decoding
             #if defined(IR_SMALLD_NEC) //NEC address has 8 bits
               _irData.addr = irSignal.byt[0];
@@ -130,7 +130,7 @@ void IRsmallDecoder::irISR() { //executed every time the IR signal goes down (bu
               //.addr is the 16 bit value pointed by the address of byt[0]  (byt[1] is addr high byte)
               // dereferencing type-punned pointer will break strict-aliasing rules
             #endif
-        	  _irData.cmd = irSignal.byt[2];
+            _irData.cmd = irSignal.byt[2];
             _irData.keyHeld = false;
             _irDataAvailable = true;
             possiblyHeld = true;  //will remain true if the next gap is OK

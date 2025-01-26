@@ -66,7 +66,7 @@
       + IR_SMALLD_SIRC12    \
       + IR_SMALLD_SIRC15    \
       + IR_SMALLD_SIRC20    \
-      + IR_SMALLD_SIRC	    \
+      + IR_SMALLD_SIRC      \
       + IR_SMALLD_SAMSUNG   \
       + IR_SMALLD_SAMSUNG32 )
 

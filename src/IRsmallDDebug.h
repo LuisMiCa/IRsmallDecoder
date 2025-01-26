@@ -38,7 +38,7 @@
   #ifdef IRSMALLD_DEBUG_STATE
     #define DBG_PRINT_STATE(...)  Serial.print(__VA_ARGS__);
   #else
-    #define DBG_PRINT_STATE(...) 	//nothing
+    #define DBG_PRINT_STATE(...)   //nothing
   #endif
 
   // Signals' intervals' duration:
@@ -49,7 +49,7 @@
       #define DBG_PRINTLN_DUR(...)  {Serial.print(" i"); Serial.println(__VA_ARGS__);}
     #endif
   #else
-    #define DBG_PRINTLN_DUR(...) 	//nothing
+    #define DBG_PRINTLN_DUR(...)   //nothing
   #endif
 
   // ISR Execution Time and Average:

@@ -57,6 +57,13 @@
   #error IR_ISR_MODE not defined.
 #endif
 
+// ****************************************************************************
+// TIMEOUT check / definition
+// By default, a timeout will be used. Value is in micro-seconds.
+// A value of 200 000 us is enough for the implemented protocols.
+#if not defined(IR_SMALLD_NO_TIMEOUT)
+  #define IR_SMALLD_TIMEOUT 200000
+#endif
 
 // ****************************************************************************
 // Decoder class's forward declaration/definition:
@@ -64,6 +71,7 @@
 class IRsmallDecoder {
   private:
     static void irISR();
+    void resetFSM();                        //used by enable method and timeout
     static volatile bool _irDataAvailable;  //will be updated by the ISR
     static volatile irSmallD_t _irData;     //will be updated by the ISR
     static volatile uint8_t _state;         //will be updated and used by the ISR (and timeout)
@@ -110,13 +118,21 @@ IRsmallDecoder::IRsmallDecoder(uint8_t interruptPin) {
 
 
 /**
+ * Reset the ISR's FSM, by placing it in standby state
+ */
+void IRsmallDecoder::resetFSM() {
+  this->irISR();  // two consecutive calls will place any of the FSMs in standby state
+  this->irISR();  // forced _state=0 will not work with computed GOTOs based FSMs
+}
+
+
+/**
  * Enables the decoder by reattaching the ISR to the hardware interrupt
  */
 void IRsmallDecoder::enable() {
   attachInterrupt(_irInterruptNum, irISR, IR_ISR_MODE);  //interrupt flag may already be set
   //if so, ISR will be immediately executed and the FSM jumps out of standby state
-  this->irISR();  // two consecutive calls will place any of the FSMs in standby
-  this->irISR();
+  this->resetFSM();  // Put the FSM in Standby state
 }
 
 
@@ -135,6 +151,23 @@ void IRsmallDecoder::disable() {
  * @return true if new data was decoded and retrieved; false if not.
  */
 bool IRsmallDecoder::dataAvailable(irSmallD_t &irData) {
+  // Check Timeout:
+  #if not defined(IR_SMALLD_NO_TIMEOUT)
+    if (_state) {  // if FSM is not in standby state
+      uint32_t prevTimeCopy;
+      noInterrupts(); // I don't like disabling interrupts, even for a short time, but 
+                      // in this case it's better than ATOMIC_BLOCK or a semaphore.
+      prevTimeCopy = _previousTime; // this is a non atomic instruction (could be corrupted by the ISR)
+      interrupts();
+      // the following approach is immune to the overflow (rollover) problem:
+      if ((uint32_t)(micros() - prevTimeCopy) >= (uint32_t)IR_SMALLD_TIMEOUT) {
+        DBG_PRINT_STATE("\nTIMEOUT\n");
+        this->resetFSM();  // Put the FSM in Standby state
+      }
+    }
+  #endif
+
+  // Check data availability:
   if (_irDataAvailable) {
     _irCopyingData = true;  //Let the ISR know that it cannot change the data while it's being copied
     memcpy(&irData, (void*)&_irData, sizeof(_irData));

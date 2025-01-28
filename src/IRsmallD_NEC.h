@@ -66,27 +66,29 @@ void IRsmallDecoder::irISR() { //executed every time the IR signal goes down (bu
   // FSM variables:
   static uint32_t duration;
   static uint8_t bitCount;
-  static uint32_t startTime = -1;  //FFFF...  (by two's complement)
+  //static uint32_t startTime = -1;  //FFFF...  (by two's complement)
   static union {                   //received bits are stored in reversed order (11000101... -> ...10100011)
     uint32_t all = 0;              //Arduino uses Little Endian so, if all=ABCDEF89 then in memory it's 89EFCDAB (hex format)
     uint8_t byt[4];                //then we get byt[0]=89, byt[1]=EF, byt[2]=CD and byt[3]=AB (type punning with a union...)
   } irSignal;
   static uint8_t repeatCount = 0;
-  static uint8_t state = 0;
+  ////static uint8_t state = 0;
   static bool possiblyHeld = false;
 
-  DBG_PRINT_STATE(state);
+  DBG_PRINT_STATE(_state);
   DBG_RESTART_TIMER();
 
-  duration = micros() - startTime;  //note: micros() has a 4μs resolution (multiples of 4) @ 16MHz or 8μs @ 8MHz
-  startTime = micros();
+  //duration = micros() - startTime;  //note: micros() has a 4μs resolution (multiples of 4) @ 16MHz or 8μs @ 8MHz
+  duration = micros() - _previousTime;  //note: micros() has a 4μs resolution (multiples of 4) @ 16MHz or 8μs @ 8MHz
+  //startTime = micros();  
+  _previousTime = micros();
   DBG_PRINTLN_DUR(duration);
 
-  switch (state) {  //asynchronous (event-driven) Finite State Machine
+  switch (_state) {  //asynchronous (event-driven) Finite State Machine
     case 0:  //standby:
       if (duration > c_GapMin) {
         if (duration > c_GapMax) possiblyHeld = false;
-        state = 1;
+        _state = 1;
       } 
       else possiblyHeld = false;
     break;
@@ -95,7 +97,7 @@ void IRsmallDecoder::irISR() { //executed every time the IR signal goes down (bu
       if (duration >= c_LMmin && duration <= c_LMmax) {  //it's a Leading Mark
         bitCount = 0;
         repeatCount = 0;
-        state = 2;
+        _state = 2;
       } else {
         if (possiblyHeld && duration >= c_RMmin && duration <= c_RMmax) {  //it's a Repeat Mark
           if (repeatCount < c_RptCount) repeatCount++;  //first repeat signals will be ignored
@@ -104,20 +106,20 @@ void IRsmallDecoder::irISR() { //executed every time the IR signal goes down (bu
             _irDataAvailable = true;
           }
         }
-        state = 0;
+        _state = 0;
       }
     break;
 
     case 2: //receiving:
-      if (duration < c_M0min || duration > c_M1max) state = 0;  //error, not a bit mark
+      if (duration < c_M0min || duration > c_M1max) _state = 0;  //error, not a bit mark
       else {                // it's M0 or M1
         irSignal.all >>= 1; //push a 0 from left to right (will be left at 0 if it's M0)
         if (duration >= c_M1min) irSignal.byt[3] |= 0x80; //it's M1, change MSB to 1
         bitCount++;
         #if defined(IR_SMALLD_NEC) //Conditional code inclusion (at compile time)
           if (bitCount == 16) {    //Address and Inverted Address received
-            if (irSignal.byt[2] != (uint8_t)~irSignal.byt[3]) state = 0;  //address error
-            // else state = 2;  //Address OK, continue with command reception //(redundant assignment)
+            if (irSignal.byt[2] != (uint8_t)~irSignal.byt[3]) _state = 0;  //address error
+            // else _state = 2;  //Address OK, continue with command reception //(redundant assignment)
           }
           else   // that's right, a loose else...
         #endif
@@ -135,9 +137,9 @@ void IRsmallDecoder::irISR() { //executed every time the IR signal goes down (bu
             _irDataAvailable = true;
             possiblyHeld = true;  //will remain true if the next gap is OK
           }
-          state = 0;
+          _state = 0;
         }
-        // else state = 2; //continue receiving //(redundant assignment)
+        // else _state = 2; //continue receiving //(redundant assignment)
       }
     break;
   }

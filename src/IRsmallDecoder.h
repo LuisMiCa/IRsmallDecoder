@@ -66,6 +66,8 @@ class IRsmallDecoder {
     static void irISR();
     static volatile bool _irDataAvailable;  //will be updated by the ISR
     static volatile irSmallD_t _irData;     //will be updated by the ISR
+    static volatile uint8_t _state;         //will be updated and used by the ISR (and timeout)
+    static volatile uint32_t _previousTime; //will be updated and used by the ISR (and timeout)
     static bool _irCopyingData;             //used by the ISR but not changed by it, no need for volatile
     uint8_t _irInterruptNum;                //used by enable/disable Decoder methods
     
@@ -83,6 +85,8 @@ class IRsmallDecoder {
 //outside the class' forward declaration/definition (usually in the cpp file not the header)
 volatile bool IRsmallDecoder::_irDataAvailable = false;
 volatile irSmallD_t IRsmallDecoder::_irData;
+volatile uint8_t IRsmallDecoder::_state = 0;  //0=standby, in any of the FSMs
+volatile uint32_t IRsmallDecoder::_previousTime = UINT32_MAX; //not 0, that would cause an issue in the RC5 decoder
 bool IRsmallDecoder::_irCopyingData = false;  //to avoid volatile _irData corruption by the ISR
 
 

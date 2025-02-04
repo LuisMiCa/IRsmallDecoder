@@ -66,13 +66,13 @@ void IRsmallDecoder::irISR() { //executed every time the IR signal goes down (bu
   // FSM variables:
   static uint32_t duration;
   static uint8_t bitCount;
-  //static uint32_t startTime = -1;  //FFFF...  (by two's complement)
+  //static uint32_t startTime = -1;  //FFFF...  (by two's complement)  // Moved to class scope (and renamed to _previousTime)
   static union {                   //received bits are stored in reversed order (11000101... -> ...10100011)
     uint32_t all = 0;              //Arduino uses Little Endian so, if all=ABCDEF89 then in memory it's 89EFCDAB (hex format)
     uint8_t byt[4];                //then we get byt[0]=89, byt[1]=EF, byt[2]=CD and byt[3]=AB (type punning with a union...)
   } irSignal;
   static uint8_t repeatCount = 0;
-  ////static uint8_t state = 0;
+  ////static uint8_t state = 0;  // Moved to class scope (and renamed to _state)
   static bool possiblyHeld = false;
 
   DBG_PRINT_STATE(_state);

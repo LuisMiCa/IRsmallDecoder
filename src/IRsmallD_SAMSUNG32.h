@@ -52,27 +52,27 @@ void IRsmallDecoder::irISR() { //executed every time the IR signal goes UP (but 
   // FSM variables:
   static uint32_t duration;
   static uint8_t  bitCount;
-  static uint32_t startTime = -1;  //FFFF... (by two's complement)
+  //// static uint32_t startTime = -1;  //FFFF... (by two's complement)  // Moved to class scope (and renamed to _previousTime)
   static uint8_t  irSignal[4];
   static uint8_t  byteIndex = 0;
-  static uint8_t  state = 0;
+  /// static uint8_t  state = 0;  // Moved to class scope (and renamed to _state)
   static uint8_t  repeatCount = 0;
   static bool possiblyHeld = false;
 
 
-  DBG_PRINT_STATE(state);
+  DBG_PRINT_STATE(_state);
   DBG_RESTART_TIMER();
   
-  duration = micros() - startTime;
-  startTime = micros();
+  duration = micros() - _previousTime;
+  _previousTime = micros();
   DBG_PRINTLN_DUR(duration);
 
 
-  switch (state) {  //asynchronous (event-driven) Finite State Machine
+  switch (_state) {  //asynchronous (event-driven) Finite State Machine
     case 0:         //standby:
       if (duration > c_GapMin) {
         if (duration > c_GapMax) possiblyHeld = false;
-        state = 1;
+        _state = 1;
       } else possiblyHeld = false;
     break;
 
@@ -80,19 +80,19 @@ void IRsmallDecoder::irISR() { //executed every time the IR signal goes UP (but 
       if (duration >= c_LMmin && duration <= c_LMmax) {  //its a Leading Mark
         bitCount = 0;
         byteIndex = 0;
-        state = 2;
-      } else state = 0;
+        _state = 2;
+      } else _state = 0;
     break;
 
     case 2: //receiving:
-      if (duration < c_M0min || duration > c_M1max) state = 0;  //error, not a bit mark
+      if (duration < c_M0min || duration > c_M1max) _state = 0;  //error, not a bit mark
       else {                                                    //it's M0 or M1
         irSignal[byteIndex] >>= 1;                              //push a 0 from left to right (will be left at 0 if it's M0)
         if (duration >= c_M1min) irSignal[byteIndex] |= 0x80;   //it's M1, change MSB to 1
         bitCount++;
         if (bitCount == 8 || bitCount == 16 || bitCount == 24) byteIndex++;          //byte full, proceed to the next one (stay in same state)
         else if (bitCount == 32) {                                                   //all bits received,
-          state = 0;                                                                 //all paths lead to the standby state...
+          _state = 0;                                                                 //all paths lead to the standby state...
           if (irSignal[0] == irSignal[1] && irSignal[2] == (uint8_t)~irSignal[3]) {  //address OK && command OK,
             if (possiblyHeld && (irSignal[2] == _irData.cmd)) {                      //keyHeld confirmed (cmd didn't changed)
               if (repeatCount < c_RptCount) repeatCount++;                           //first repeat signals will be ignored
@@ -110,7 +110,7 @@ void IRsmallDecoder::irISR() { //executed every time the IR signal goes UP (but 
             }
           }
         }
-        //else state=2;  //continue receiving, (stay in current state)
+        //else _state=2;  //continue receiving, (stay in current state)
       }
     break;
   }

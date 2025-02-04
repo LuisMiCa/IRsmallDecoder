@@ -40,17 +40,17 @@ void IRsmallDecoder::irISR() { //executed every time the IR signal changes (caut
   // FSM variables:
   static uint32_t duration;
   static uint8_t  bitCount;
-  static uint32_t startTime = -1;      //FFFF... solves problem with initial unknown toggle state (50% chance of starting with held)
+  //// static uint32_t startTime = -1;      //FFFF... solves problem with initial unknown toggle state (50% chance of starting with held)  // Moved to class scope (and renamed to _previousTime)
   static uint16_t irSignal;            //only 14 bits used
   static bool     prevToggle = false;  //used to convert Toggle to Held
   static uint8_t  repeatCount = 0;
   static uint32_t lastBitTime = 0;     //for the repeat code confirmation
 
-  FSM_INITIALIZE(st_standby);
+  FSM_INITIALIZE(st_standby);  //initialize the "hidden" variable fsm_state (one time only)
 
   DBG_RESTART_TIMER();
-  duration = micros() - startTime;
-  startTime = micros();
+  duration = micros() - _previousTime;
+  _previousTime = micros();
   DBG_PRINTLN_DUR(duration);
 
   FSM_SWITCH(){ //asynchronous (event-driven) Finite State Machine implemented with computed GOTOs
@@ -116,7 +116,7 @@ void IRsmallDecoder::irISR() { //executed every time the IR signal changes (caut
     ps_decode:
       DBG_PRINT_STATE("d");
       if (!_irCopyingData) {  //if not interrupting a copy, decode (else, discard this signal)
-        if (startTime - lastBitTime < c_rptPmax && (prevToggle == bool(irSignal & 0x0800))) {  //if period OK and toggle bit did not change, then the key was held
+        if (_previousTime - lastBitTime < c_rptPmax && (prevToggle == bool(irSignal & 0x0800))) {  //if period OK and toggle bit did not change, then the key was held
           if (repeatCount < c_rptCount) repeatCount++;
           else {  // initial repetitions already ignored
             _irData.keyHeld = true;
@@ -130,12 +130,13 @@ void IRsmallDecoder::irISR() { //executed every time the IR signal changes (caut
           repeatCount = 0;
         }
         prevToggle = bool(irSignal & 0x0800);
-        lastBitTime = startTime;  //last bit transition time (for keyHeld confirmation)
+        lastBitTime = _previousTime;  //last bit transition time (for keyHeld confirmation)
       }
       FSM_NEXT(st_standby);
     break;
   }
 
+  _state = fsm_state != &&st_standby;  //needed just for the timeout check. Will be false (0) if the FSM is in standby state
   DBG_PRINTLN_TIMER();
 }
 

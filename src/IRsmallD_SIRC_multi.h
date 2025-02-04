@@ -61,41 +61,41 @@ void IRsmallDecoder::irISR() { //executed every time the IR signal goes down (bu
   // FSM variables:
   static uint32_t duration;
   static uint8_t  bitCount;
-  static unsigned long startTime=-1;  //FFFF...
+  //// static unsigned long startTime=-1;  //FFFF...  // Moved to class scope (and renamed to _previousTime)
   static union {       // received bits are stored in reversed order (11000101... -> ...10100011)
     uint32_t all = 0;  // if all=ABCDEF00 then in memory it's 00EFCDAB (hex format)
     uint8_t  byt[4];   // byt[0]=00;  byt[1]=EF;  byt[2]=CD;  byt[3]=AB
   } irSignal;
-  static uint8_t  state = 0;
+  //// static uint8_t  state = 0;  // Moved to class scope (and renamed to _state)
   static uint8_t  frameCount;
   static uint8_t  firstBitCount = 20;
   static uint32_t firstCode;
   static bool     possiblyHeld = false;
   static uint8_t  repeatCount = 0;
 
-  DBG_PRINT_STATE(state);
+  DBG_PRINT_STATE(_state);
   DBG_RESTART_TIMER();
 
-  duration = micros() - startTime;
-  startTime = micros();
+  duration = micros() - _previousTime;
+  _previousTime = micros();
   DBG_PRINTLN_DUR(duration)
 
-  switch (state) {  //asynchronous (event-driven) Finite State Machine
+  switch (_state) {  //asynchronous (event-driven) Finite State Machine
     case 0:  //Standby
       if (duration >= c_GapMin) {  //only starts after a GAP without signals
         if (duration > c_GapMax) possiblyHeld = false;
         bitCount = 0;
         irSignal.all = 0;
         frameCount = 1;
-        state = 1;
+        _state = 1;
       } else possiblyHeld = false;
     break;
 
     case 1: //Receiving
       if (duration < c_M0min || duration > c_M1max) {                    //not a Bit Mark duration
-        if (frameCount == 3) state = 0;                                  //duration error in frame 3
+        if (frameCount == 3) _state = 0;                                  //duration error in frame 3
         else {                                                           //not a Bit Mark duration, possibly a Gap @ frame 1 or frame 2
-          if (duration < c_GapMin || duration > c_GapMax) state = 0;     //duration error
+          if (duration < c_GapMin || duration > c_GapMax) _state = 0;     //duration error
           else {                                                         //it's a Gap at the end of frame 1 or frame 2
             if (frameCount == 1) {                                       //frame 1 received
               if (bitCount == 12 || bitCount == 15 || bitCount == 20) {  //bitCount confirmed, prep for frame 2
@@ -104,13 +104,13 @@ void IRsmallDecoder::irISR() { //executed every time the IR signal goes down (bu
                 firstCode = irSignal.all;
                 irSignal.all = 0;
                 frameCount = 2;
-              } else state = 0;                 //bitCount error
+              } else _state = 0;                 //bitCount error
             } else {                            //frame 2 received
               if (irSignal.all == firstCode) {  //code OK, prep for frame 3
                 bitCount = 0;
                 irSignal.all = 0;
                 frameCount = 3;
-              } else state = 0;                 //code error @ end of frame 2
+              } else _state = 0;                 //code error @ end of frame 2
             }
           }
         }
@@ -145,7 +145,7 @@ void IRsmallDecoder::irISR() { //executed every time the IR signal goes down (bu
               possiblyHeld = true;  //will remain true if the next gap is OK
             }
             repeatCount = 0;
-            state = 0;   //done
+            _state = 0;   //done
           }              //else continue Receiving frame 3 (no need to set state)
         } else {         //it's frame 1 or 2. Check if key held
           if (frameCount == 1 && possiblyHeld && bitCount == firstBitCount && irSignal.all == firstCode) {  //keyHeld
@@ -154,7 +154,7 @@ void IRsmallDecoder::irISR() { //executed every time the IR signal goes down (bu
               _irData.keyHeld = true;
               _irDataAvailable = true;
             }
-            state = 0;
+            _state = 0;
           }
         }
       }

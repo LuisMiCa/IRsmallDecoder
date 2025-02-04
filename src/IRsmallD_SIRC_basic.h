@@ -68,7 +68,7 @@ void IRsmallDecoder::irISR() { //executed every time the IR signal goes down (bu
   // FSM variables:
   static uint32_t duration;
   static uint8_t bitCount;
-  static unsigned long startTime = -1;  //FFFF...
+  //// static unsigned long startTime = -1;  //FFFF...  // Moved to class scope (and renamed to _previousTime)
   static union {  //received bits are stored in reversed order (11000101... -> ...10100011)
     #if defined(IR_SMALLD_SIRC12) || defined(IR_SMALLD_SIRC15)
       uint16_t all = 0;  //Arduino uses Little Endian so, if all=ABCD then in memory it's CDAB (hex format)
@@ -78,25 +78,25 @@ void IRsmallDecoder::irISR() { //executed every time the IR signal goes down (bu
       uint8_t byt[4];    //byt[0]=00;  byt[1]=EF;  byt[2]=CD;  byt[3]=AB
     #endif
   } irSignal;
-  static uint8_t state = 0;
+  //// static uint8_t state = 0;  // Moved to class scope (and renamed to _state)
 
-  DBG_PRINT_STATE(state);
+  DBG_PRINT_STATE(_state);
   DBG_RESTART_TIMER();
 
-  duration = micros() - startTime;
-  startTime = micros();
+  duration = micros() - _previousTime;
+  _previousTime = micros();
   DBG_PRINTLN_DUR(duration)
 
-  switch (state) {  //asynchronous (event-driven) Finite State Machine
+  switch (_state) {  //asynchronous (event-driven) Finite State Machine
     case 0: //Standby
       if (duration > c_GapMin) {  //only starts after a GAP without signals
         bitCount = 0;
-        state = 1;  //leading pulse detected
+        _state = 1;  //leading pulse detected
       }
     break;
 
     case 1: //Receiving
-      if (duration < c_M0min || duration > c_M1max) state = 0;  //not a Mark duration
+      if (duration < c_M0min || duration > c_M1max) _state = 0;  //not a Mark duration
       else {                                                    //its M0 or M1
         irSignal.all >>= 1; //push a 0 from left to right (will be left at 0 if it's M0)
         bitCount++;
@@ -126,8 +126,8 @@ void IRsmallDecoder::irISR() { //executed every time the IR signal goes down (bu
             #endif  
             _irDataAvailable = true;
           }
-          state = 0; //done
-        } // else state = 1;  //continue Receiving  //(redundant assignment)
+          _state = 0; //done
+        } // else _state = 1;  //continue Receiving  //(redundant assignment)
       }
     break;
   }

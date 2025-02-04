@@ -56,25 +56,25 @@ void IRsmallDecoder::irISR() { //executed every time the IR signal goes UP (but 
   // FSM variables:
   static uint32_t duration;
   static uint8_t  bitCount;
-  static uint32_t startTime = -1;  //FFFF...  (by two's complement)
+  //// static uint32_t startTime = -1;  //FFFF...  (by two's complement)  // Moved to class scope (and renamed to _previousTime)
   static uint8_t  signal_Cmd;      //starts as an auxiliary Byte for address decoding
   static uint16_t signal_Addr16;
-  static uint8_t  state = 0;
+  //// static uint8_t  state = 0;  // Moved to class scope (and renamed to _state)
   static uint8_t  repeatCount = 0;
   static bool     possiblyHeld = false;
 
-  DBG_PRINT_STATE(state);
+  DBG_PRINT_STATE(_state);
   DBG_RESTART_TIMER();
   
-  duration = micros() - startTime;
-  startTime = micros();
+  duration = micros() - _previousTime;
+  _previousTime = micros();
   DBG_PRINTLN_DUR(duration);
 
-  switch (state) {  //asynchronous (event-driven) Finite State Machine
+  switch (_state) {  //asynchronous (event-driven) Finite State Machine
     case 0: //standby:
       if (duration > c_GapMin) {
         if (duration > c_GapMax) possiblyHeld = false;
-        state = 1;
+        _state = 1;
       }
       else possiblyHeld = false;
     break;
@@ -82,13 +82,13 @@ void IRsmallDecoder::irISR() { //executed every time the IR signal goes UP (but 
     case 1: //startPulse:
       if (duration >= c_LMmin && duration <= c_LMmax) { //its a Leading Mark
         bitCount = 0;
-        state = 2;
+        _state = 2;
       }
-      else state = 0;
+      else _state = 0;
     break;
  
     case 2: //receiving:
-      if (duration < c_M0min || duration > c_M1max) state = 0;  //error, not a bit mark
+      if (duration < c_M0min || duration > c_M1max) _state = 0;  //error, not a bit mark
       else {                                                    //it's M0 or M1
         signal_Cmd >>= 1;                                       //push a 0 from left to right (will be left at 0 if it's M0)
         if (duration >= c_M1min) signal_Cmd |= 0x80;            //it's M1, change MSB to 1
@@ -112,9 +112,9 @@ void IRsmallDecoder::irISR() { //executed every time the IR signal goes UP (but 
             possiblyHeld = true;  //will remain true if the next gap is OK
             repeatCount = 0;
           }
-          state = 0;     //done
+          _state = 0;     //done
         }
-        //else state=2;  //stay in the same state
+        //else _state=2;  //stay in the same state
       }
     break;
   }

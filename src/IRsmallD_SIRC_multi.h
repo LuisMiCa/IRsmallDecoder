@@ -42,7 +42,7 @@
  */
 
 
-void IRsmallDecoder::irISR() { //executed every time the IR signal goes down (but it's actually RISING @ ReceiverOutput)
+void IR_ISR_ATTR IRsmallDecoder::irISR() { //executed every time the IR signal goes down (but it's actually RISING @ ReceiverOutput)
   // SIRC timings' thresholds in micro secs:
   //Minimum standard Gap length = (75-(4+3*20))*600  --> assuming 20 bit 1s, which has the smallest gapMin
   //Maximum standard Gap length = (75-(4+2*12))*600  --> assuming 12 bit 0s, which has the biggest gapMax

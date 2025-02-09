@@ -45,7 +45,7 @@
  */
 
 
-void IRsmallDecoder::irISR() { //executed every time the IR signal goes down (but it's actually RISING @ ReceiverOutput)
+void IR_ISR_ATTR IRsmallDecoder::irISR() { //executed every time the IR signal goes down (but it's actually RISING @ ReceiverOutput)
   #if defined(IR_SMALLD_SIRC12) //Conditional code inclusion (at compile time) 
     const uint8_t c_NumberOfBits = 12;
   #elif defined(IR_SMALLD_SIRC15)

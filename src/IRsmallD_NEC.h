@@ -48,7 +48,7 @@
 // https://github.com/LuisMiCa/IRsmallDecoder/blob/master/extras/Timings/NEC_timings.svg
 
 
-void IRsmallDecoder::irISR() { //executed every time the IR signal goes down (but it's actually RISING @ ReceiverOutput)
+void IR_ISR_ATTR IRsmallDecoder::irISR() { //executed every time the IR signal goes down (but it's actually RISING @ ReceiverOutput)
   const uint16_t c_GapMin = NEC_GAP_1 * 0.7;        // 34256
   const uint32_t c_GapMax = NEC_GAP_2 * 1.3;        //136743
   const uint16_t c_RMmin = NEC_R_MARK * 0.7;        //  1968

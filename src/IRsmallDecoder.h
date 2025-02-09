@@ -57,6 +57,32 @@
   #error IR_ISR_MODE not defined.
 #endif
 
+
+// ****************************************************************************
+// Set the ISR memory attribute (for fast execution) according to the MCU type:
+// In ESP32 / ESP8266, flash memory can be slow and inaccessible during certain operations, making it 
+// critical to store ISRs in IRAM / ICACHE (Instruction RAM / Instruction CACHE) for fast and reliable execution.
+#if defined(ESP32) || defined(ARDUINO_ARCH_ESP32)
+  #if defined(ARDUINO_ISR_ATTR)
+    #define IR_ISR_ATTR ARDUINO_ISR_ATTR
+  #elif defined(IRAM_ATTR)
+    #define IR_ISR_ATTR IRAM_ATTR
+  #else
+    #define IR_ISR_ATTR  // empty attribute
+    #warning "No ISR attribute for this ESP32!? (interrupts will not be optimized for fast execution)"
+  #endif
+#elif defined(ESP8266) || defined(ARDUINO_ARCH_ESP8266)
+  #if defined(ICACHE_RAM_ATTR)
+    #define IR_ISR_ATTR ICACHE_RAM_ATTR
+  #else
+    #define IR_ISR_ATTR  // empty attribute
+    #warning "No ISR attribute for this ESP8266!? (interrupts will not be optimized for fast execution)"
+  #endif
+#else
+  #define IR_ISR_ATTR  // empty attribute
+#endif
+
+
 // ****************************************************************************
 // TIMEOUT check / definition
 // By default, a timeout will be used. Value is in micro-seconds.

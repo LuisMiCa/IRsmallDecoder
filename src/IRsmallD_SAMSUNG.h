@@ -39,7 +39,7 @@
 #define STOP_SPACE_MAX 27938       //27937.5 to be more precise
 
 
-void IRsmallDecoder::irISR() { //executed every time the IR signal goes UP (but it's actually FALLING @ ReceiverOutput)
+void IR_ISR_ATTR IRsmallDecoder::irISR() { //executed every time the IR signal goes UP (but it's actually FALLING @ ReceiverOutput)
   // SAMSUNG timing thresholds:
   const uint16_t c_LMmax = LEADING_MARK * 1.1;           // 10% more = 9900
   const uint16_t c_LMmin = LEADING_MARK * 0.9;           // 10% less = 8100

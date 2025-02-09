@@ -26,7 +26,7 @@
  */
 
 
-void IRsmallDecoder::irISR() { //executed every time the IR signal changes (caution, it's reversed because of the INPUT_PULLUP mode)
+void IR_ISR_ATTR IRsmallDecoder::irISR() { //executed every time the IR signal changes (caution, it's reversed because of the INPUT_PULLUP mode)
   // RC5 timings in micro secs:
   const uint32_t c_rptPmax   = 113792 * 1.2;  //Repetition period upper threshold (20% above standard)
   const uint32_t c_gapMin    = 88900 * 0.8;   //Lower threshold of the gap between 2 signals (20% below standard)

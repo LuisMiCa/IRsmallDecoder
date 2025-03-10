@@ -87,17 +87,17 @@
 // By default, a timeout will be used (if IR_SMALLD_NO_TIMEOUT is not defined).
 // Timeout value is in micro-seconds.
 #if defined(IR_SMALLD_NEC) || defined(IR_SMALLD_NECx)                          
-  #define IR_SMALLD_TIMEOUT 105188*1.2  //max time between events = 105.188ms (@IR fall -> I/O input rise)
+  #define IR_SMALLD_TIMEOUT 126226  //=ceil(105188*1.2) //max time between events = 105.188ms (@IR fall -> I/O input rise)
 #elif defined(IR_SMALLD_RC5)
-  #define IR_SMALLD_TIMEOUT 89100*1.2   //max time between events = 114ms-24.9ms = 89.100ms (OnChange mode)
+  #define IR_SMALLD_TIMEOUT 106920  //=ceil(89100*1.2) //max time between events = 114ms-24.9ms = 89.100ms (OnChange mode)
 #elif defined(IR_SMALLD_SAMSUNG)
-  #define IR_SMALLD_TIMEOUT 27937.5*1.2 //max time between events = 27937.5 µs (@IR rise -> I/O input fall)
+  #define IR_SMALLD_TIMEOUT 33525  //=ceil(27937.5*1.2) //max time between events = 27937.5 µs (@IR rise -> I/O input fall)
 #elif defined(IR_SMALLD_SAMSUNG32)  
-  #define IR_SMALLD_TIMEOUT 53437.5*1.2 //max time between events = 53437.5 µs (@IR rise -> I/O input fall)
+  #define IR_SMALLD_TIMEOUT 64125  //=ceil(53437.5*1.2) //max time between events = 53437.5 µs (@IR rise -> I/O input fall)
 #elif defined(IR_SMALLD_SIRC12) || defined(IR_SMALLD_SIRC15) || defined(IR_SMALLD_SIRC20)
-  #define IR_SMALLD_TIMEOUT 1800*1.2  //max time between events = 1800 µs (@IR fall -> I/O input rise)
+  #define IR_SMALLD_TIMEOUT 2160  //=ceil(1800*1.2) //max time between events = 1800 µs (@IR fall -> I/O input rise)
 #elif defined(IR_SMALLD_SIRC)
-  #define IR_SMALLD_TIMEOUT 31200*1.2  //max time between events = 31200 µs (@IR fall -> I/O input rise)
+  #define IR_SMALLD_TIMEOUT 37440  //=ceil(31200*1.2) //max time between events = 31200 µs (@IR fall -> I/O input rise)
 #else
   #error Timeout not defined.
 #endif

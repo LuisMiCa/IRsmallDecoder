@@ -55,65 +55,85 @@ void IR_ISR_ATTR IRsmallDecoder::irISR() { //executed every time the IR signal c
 
   FSM_SWITCH(){ //asynchronous (event-driven) Finite State Machine implemented with computed GOTOs
     //====== States: st_standby, st_roseInSync, st_roseOffSync, st_fellInSync, st_fellOffSync
-    st_standby:
-      DBG_PRINT_STATE(0);
+    st_standby:  // state 0
       if (duration >= c_gapMin) {  //start pulse detected. It's very unlikely that a non-start pulse will be longer than c_gapMin
         bitCount = 0;
         irSignal = 0;
         FSM_NEXT(st_roseInSync);
+        DBG_PRINT_STATE(1);
       }
     break;
     
-    st_roseInSync:
-      DBG_PRINT_STATE(1);
+    st_roseInSync:  // state 1
       irSignal <<= 1; irSignal += 1;  // push Bit 1 (from right to left)
       bitCount++;
-      if(duration < c_shortMin || duration > c_longMax) FSM_NEXT(st_standby);  //error
-      else if(duration <= c_shortMax) FSM_NEXT(st_fellOffSync);                //it's Short
-      else FSM_DIRECTJUMP(ps_roseChoice);                                      //it's Long
+      if(duration < c_shortMin || duration > c_longMax){      //error
+        FSM_NEXT(st_standby);
+        DBG_PRINT_STATE(0);
+      }
+      else if(duration <= c_shortMax) {                       //it's Short
+        FSM_NEXT(st_fellOffSync); 
+        DBG_PRINT_STATE(4);
+      }
+      else FSM_DIRECTJUMP(ps_roseChoice);                     //it's Long
     break;
     
-    st_roseOffSync:
-      DBG_PRINT_STATE(2);
-      if (duration < c_shortMin || duration > c_shortMax) FSM_NEXT(st_standby);  //error
-      else FSM_DIRECTJUMP(ps_roseChoice);                                        //it's Short
+    st_roseOffSync:  // state 2
+      if (duration < c_shortMin || duration > c_shortMax) {   //error
+        FSM_NEXT(st_standby);
+        DBG_PRINT_STATE(0);
+      }
+      else FSM_DIRECTJUMP(ps_roseChoice);                     //it's Short
     break;
       
-    st_fellInSync:
-      DBG_PRINT_STATE(3);
+    st_fellInSync:  // state 3
       irSignal <<= 1;  // push Bit 0 (from right to left)
       bitCount++;
-      if (duration < c_shortMin || duration > c_longMax) FSM_NEXT(st_standby); //error
-      else if (duration <= c_shortMax) FSM_NEXT(st_roseOffSync);               //it's Short
-      else FSM_DIRECTJUMP(ps_fellChoice);                                      //it's Long
+      if (duration < c_shortMin || duration > c_longMax) {    //error
+        FSM_NEXT(st_standby); 
+        DBG_PRINT_STATE(0);
+      }
+      else if (duration <= c_shortMax) {                      //it's Short
+        FSM_NEXT(st_roseOffSync);
+        DBG_PRINT_STATE(2);
+      }
+      else FSM_DIRECTJUMP(ps_fellChoice);                     //it's Long
     break;
       
-    st_fellOffSync:
-      DBG_PRINT_STATE(4);
-      if (duration < c_shortMin || duration > c_shortMax) FSM_NEXT(st_standby); //error
-      else FSM_DIRECTJUMP(ps_fellChoice);                                       //it's Short
+    st_fellOffSync:  // state 4
+      if (duration < c_shortMin || duration > c_shortMax) {   //error
+        FSM_NEXT(st_standby);
+        DBG_PRINT_STATE(0);
+      }
+      else FSM_DIRECTJUMP(ps_fellChoice);                     //it's Short
     break;
       
     //======= Pseudo-states: ps_roseChoice, ps_fellChoice, ps_decode
-    ps_roseChoice:
+    ps_roseChoice:  // state r
       DBG_PRINT_STATE("r");
       if (bitCount==13) {            //all 14 bits received
         irSignal <<= 1;              //push bit 0 from right to left
         FSM_DIRECTJUMP(ps_decode);   //ps_decode will handle the rest...
       }
-      else FSM_NEXT(st_fellInSync);
+      else {
+        FSM_NEXT(st_fellInSync);
+        DBG_PRINT_STATE(3);
+      }
     break;
     
-    ps_fellChoice:
+    ps_fellChoice:  // state f
       DBG_PRINT_STATE("f");
       if (bitCount==13) {                //all 14 bits received     
         irSignal <<= 1;  irSignal += 1;  //push bit 1 from right to left
         FSM_DIRECTJUMP(ps_decode);       //ps_decode will handle the rest...
       }
-      else FSM_NEXT(st_roseInSync);
+      else {
+        FSM_NEXT(st_roseInSync);
+        DBG_PRINT_STATE(1);
+      }
     break;
     
-    ps_decode:
+    ps_decode:  // state d
       DBG_PRINT_STATE("d");
       if (!_irCopyingData) {  //if not interrupting a copy, decode (else, discard this signal)
         if (_previousTime - lastBitTime < c_rptPmax && (prevToggle == bool(irSignal & 0x0800))) {  //if period OK and toggle bit did not change, then the key was held
@@ -133,6 +153,7 @@ void IR_ISR_ATTR IRsmallDecoder::irISR() { //executed every time the IR signal c
         lastBitTime = _previousTime;  //last bit transition time (for keyHeld confirmation)
       }
       FSM_NEXT(st_standby);
+      DBG_PRINT_STATE(0);
     break;
   }
 

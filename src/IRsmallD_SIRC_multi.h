@@ -73,7 +73,6 @@ void IR_ISR_ATTR IRsmallDecoder::irISR() { //executed every time the IR signal g
   static bool     possiblyHeld = false;
   static uint8_t  repeatCount = 0;
 
-  DBG_PRINT_STATE(_state);
   DBG_RESTART_TIMER();
 
   duration = micros() - _previousTime;
@@ -161,6 +160,7 @@ void IR_ISR_ATTR IRsmallDecoder::irISR() { //executed every time the IR signal g
     break;  //end of case 1 (Receiving)
   }
   DBG_PRINTLN_TIMER();
+  DBG_PRINT_STATE(_state);
 }
 
 

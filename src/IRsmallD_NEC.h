@@ -75,7 +75,6 @@ void IR_ISR_ATTR IRsmallDecoder::irISR() { //executed every time the IR signal g
   ////static uint8_t state = 0;  // Moved to class scope (and renamed to _state)
   static bool possiblyHeld = false;
 
-  DBG_PRINT_STATE(_state);
   DBG_RESTART_TIMER();
 
   //duration = micros() - startTime;  //note: micros() has a 4μs resolution (multiples of 4) @ 16MHz or 8μs @ 8MHz
@@ -145,4 +144,5 @@ void IR_ISR_ATTR IRsmallDecoder::irISR() { //executed every time the IR signal g
   }
 
   DBG_PRINTLN_TIMER();
+  DBG_PRINT_STATE(_state);
 }

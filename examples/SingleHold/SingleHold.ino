@@ -36,7 +36,7 @@ bool keyReleased = true;
 
 void setup() {
   pinMode(LED_BUILTIN, OUTPUT);
-  Serial.begin(250000);
+  Serial.begin(115200);
 
   Serial.print("Press the key that will turn \"ON\" the LED ");
   while (!irDecoder.dataAvailable(irData)) ;  //waiting for one keypress

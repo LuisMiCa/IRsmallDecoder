@@ -43,7 +43,7 @@ unsigned long currentMillis;
 
 void setup() {
   pinMode(LED_BUILTIN, OUTPUT);
-  Serial.begin(250000);
+  Serial.begin(115200);
   Serial.println("Press the remote key that will temporarily disable the IR decoder.");
   while (!irDecoder.dataAvailable(irData)) ;  //waiting for one keypress
   keyDisable = irData.cmd;

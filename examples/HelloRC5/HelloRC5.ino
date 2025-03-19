@@ -17,7 +17,7 @@ IRsmallDecoder irDecoder(2);  //3rd: create one decoder object with the correct 
 irSmallD_t irData;            //4th: declare one decoder data structure;
 
 void setup() {
-  Serial.begin(250000);
+  Serial.begin(115200);
   Serial.println("Waiting for a RC5 remote control IR signal...");
   Serial.println("held\t addr\t cmd");
 }

@@ -33,7 +33,7 @@ int rptCounter = 0;
 int increment = 1;
 
 void setup() {
-  Serial.begin(250000);
+  Serial.begin(115200);
 
   Serial.print("Press the \"UP\" key on the remote ");
   while (!irDecoder.dataAvailable(irData)) ;  //waiting for one keypress

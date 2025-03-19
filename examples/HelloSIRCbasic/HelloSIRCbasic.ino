@@ -27,7 +27,7 @@ IRsmallDecoder irDecoder(2);  //3rd: create one decoder object with the correct 
 irSmallD_t irData;            //4th: declare one decoder data structure;
 
 void setup() {
-  Serial.begin(250000);
+  Serial.begin(115200);
   #if defined(IR_SMALLD_SIRC12) 
     Serial.println("Waiting for a SIRC12 remote control IR signal...");
     Serial.println("Addr\tCmd");

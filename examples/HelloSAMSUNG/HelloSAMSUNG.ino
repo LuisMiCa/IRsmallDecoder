@@ -30,7 +30,7 @@ void setup() {
 
 void loop() {
   if (irDecoder.dataAvailable(irData)) {  //5th: if the decoder has some new data available,
-    Serial.print(irData.keyHeld, HEX);    //6th: do something with the data.
+    Serial.print(irData.keyHeld);         //6th: do something with the data.
     Serial.print("\t ");
     Serial.print(irData.addr, HEX);
     Serial.print("\t ");

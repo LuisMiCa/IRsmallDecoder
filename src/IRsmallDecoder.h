@@ -51,7 +51,8 @@
 #elif defined(IR_SMALLD_SIRC12) || defined(IR_SMALLD_SIRC15) || defined(IR_SMALLD_SIRC20) || \
       defined(IR_SMALLD_SIRC)   || defined(IR_SMALLD_NEC)    || defined(IR_SMALLD_NECx)
   #define IR_ISR_MODE  RISING
-#elif IR_SMALLD_RC5
+
+#elif defined(IR_SMALLD_RC5)
   #define IR_ISR_MODE  CHANGE
 #else
   #error IR_ISR_MODE not defined.
@@ -253,15 +254,15 @@ bool IRsmallDecoder::dataAvailable() {
 // Conditional inclusion of protocol specific ISR implementations:
 #if defined(IR_SMALLD_NEC) || defined(IR_SMALLD_NECx)
   #include "IRsmallD_NEC.h"
-#elif IR_SMALLD_RC5
+#elif defined(IR_SMALLD_RC5)
   #include "IRsmallD_RC5.h"
-#elif IR_SMALLD_SIRC12 || IR_SMALLD_SIRC15 || IR_SMALLD_SIRC20
+#elif defined(IR_SMALLD_SIRC12) || defined(IR_SMALLD_SIRC15) || defined(IR_SMALLD_SIRC20)
   #include "IRsmallD_SIRC_basic.h"
-#elif IR_SMALLD_SIRC
+#elif defined(IR_SMALLD_SIRC)
   #include "IRsmallD_SIRC_multi.h"
-#elif IR_SMALLD_SAMSUNG
+#elif defined(IR_SMALLD_SAMSUNG)
   #include "IRsmallD_SAMSUNG.h"
-#elif IR_SMALLD_SAMSUNG32
+#elif defined(IR_SMALLD_SAMSUNG32)
   #include "IRsmallD_SAMSUNG32.h"
 #else
   #error ISR implementation not included.

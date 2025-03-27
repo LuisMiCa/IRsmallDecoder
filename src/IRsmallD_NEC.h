@@ -37,19 +37,23 @@
 
 
 // NEC/NECx timings in microseconds:
-#define NEC_L_MARK 5062.5  /* Leading Mark */
-#define NEC_R_MARK 2812.5  /* Repeat Mark */
-#define NEC_R_TOL   803.6  /* Repeat Mark tolerance (µs) */
-#define NEC_MARK_0  1125   /* Bit 0 Mark */
-#define NEC_MARK_1  2250   /* Bit 1 Mark */
-#define NEC_GAP_1  48937.5 /* Gap1 (before first repeat mark) */
-#define NEC_GAP_2 105187.5 /* Gap2 (between repeat marks */
+#define NEC_L_MARK 5062.5   /* Leading Mark */
+#define NEC_R_MARK 2812.5   /* Repeat Mark */
+#define NEC_R_TOL   803.6   /* Repeat Mark tolerance (µs) */
+#define NEC_MARK_0  1125    /* Bit 0 Mark */
+#define NEC_MARK_1  2250    /* Bit 1 Mark */
+#if defined(IR_SMALLD_NEC)  /* Gap1 (interval before first repeat mark) varies with the protocol */ 
+  #define NEC_GAP_1 48937.5 /* Gap1 for NEC */
+#else                       /* If it's NECx, it does not have a constant address frame length... */
+  #define NEC_GAP_1 39937.5 /* Gap1 is smallest when addr=FFFF; Gap1 = 48937.5 - (8 * 1125) = 39937.5 */  
+#endif
+#define NEC_GAP_2 105187.5  /* Gap2 (between repeat marks */
 // For more information about these timings, go to:
 // https://github.com/LuisMiCa/IRsmallDecoder/blob/master/extras/Timings/NEC_timings.svg
 
 
 void IR_ISR_ATTR IRsmallDecoder::irISR() { //executed every time the IR signal goes down (but it's actually RISING @ ReceiverOutput)
-  const uint16_t c_GapMin = NEC_GAP_1 * 0.7;        // 34256
+  const uint16_t c_GapMin = NEC_GAP_1 * 0.7;        // 34256 (or 27956 for NECx)
   const uint32_t c_GapMax = NEC_GAP_2 * 1.3;        //136743
   const uint16_t c_RMmin = NEC_R_MARK * 0.7;        //  1968
   const uint16_t c_RMmax = NEC_R_MARK + NEC_R_TOL;  //  3616

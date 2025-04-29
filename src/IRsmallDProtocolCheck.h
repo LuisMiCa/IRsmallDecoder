@@ -59,7 +59,7 @@
   #endif
   
   
-  #define IR_SMALLD_CHECSUM \
+  #define IR_SMALLD_CHECKSUM \
       ( IR_SMALLD_NEC       \
       + IR_SMALLD_NECx      \
       + IR_SMALLD_RC5       \
@@ -72,9 +72,9 @@
 
   //if IR_SMALLD_CHECSUM == 1 then it's OK (there's one and only one #define...)
 
-  #if IR_SMALLD_CHECSUM == 0
+  #if IR_SMALLD_CHECKSUM == 0
       #error Protocol not defined or misspelled... Check IRsmallDecoder Library documentation
-  #elif IR_SMALLD_CHECSUM > 1
+  #elif IR_SMALLD_CHECKSUM > 1
       #error Only one protocol is allowed... Check IRsmallDecoder Library documentation
   #endif  
 

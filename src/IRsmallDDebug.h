@@ -5,21 +5,23 @@
  *
  *
  * Debug options:
- *   IRSMALLD_DEBUG_STATE    - Prints FSM states
- *   IRSMALLD_DEBUG_INTERVAL - Prints interval's duration between consecutive interrupts (in µs)
- *   IRSMALLD_DEBUG_ISRTIME  - Prints ISR execution time (in µs)
- *   IRSMALLD_DEBUG_ISRAVG   - Prints the average of the ISR execution time (in µs)
+ *   IRSMALLD_DEBUG_STATE    - Prints FSM states.
+ *   IRSMALLD_DEBUG_INTERVAL - Prints the durations of the intervals between consecutive interrupts (in µs).
+ *   IRSMALLD_DEBUG_ISRTIME  - Prints ISR execution time (in µs).
+ *   IRSMALLD_DEBUG_ISRAVG   - Prints the average time taken by the ISR to execute (in µs).
  * 
  * NOTES:
- * - The usage of debugging functionalities requires a Serial.begin in the setup;
- * - The serial communication speed must be high, to avoid timing errors;
- *   A Baud Rate of 250000 seems to work;
- * - The usage of Serial communications inside an interrupt is not recommended, but 
- *   in this case, it's just a few prints for debugging purposes.
- * - IRSMALLD_DEBUG_ISRTIME mode uses AVR 328p Timer1 hardware specific code;
- *   Results are in microseconds, assuming a 16MHz clock (Clk Count is divided by 16 to get µs);
+ * - The usage of debugging functionalities requires a Serial.begin() in the setup;
+ * - The serial communication speed must be high, to avoid timing errors (a Baud Rate of 115200 seems to work;
+ * - The usage of Serial communications inside an interrupt is not recommended, but in this case
+ *   it's just a few prints for debugging purposes.
+ * - IRSMALLD_DEBUG_ISRTIME and IRSMALLD_DEBUG_ISRAVG modes uses AVR 328p Timer1 hardware-specific code;
+ *   These debug modes reconfigure Timer1, which will interfere with any other code using that timer.
+ * - Results are in microseconds, assuming a 16MHz clock (Clk Count is divided by 16 to get µs);
  * - IRSMALLD_DEBUG_ISRAVG shows the average of all ISR execution times since the last reset.
  *   To restart the average calculation you'll need to reset the Arduino or restart the serial monitor.
+ * - Call Serial.flush() after every Serial.print() if you need to see the output 
+ *   before the code continues with buffered data.
  */
 
 
@@ -76,12 +78,3 @@
   #endif
 
 #endif
-
-
-//instead of variadic macros, the following syntax could be used:
-//PRINT(args...)  Serial.print(args) 
-
-//Call Serial.flush() after every Serial.print() if you need to see the output before the code continues with buffered data
-
-//do{}while(false) can be used to prevent some problems with more complex macros
-// #define DBG_SERIALBEGIN(...)  do {Serial.begin(__VA_ARGS__); Serial.println("Serial Port Ready!");} while ( false )

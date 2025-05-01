@@ -5,9 +5,9 @@
  *
  *
  * Notes:
- * - It will redefine as '1' and check if there is more than one defined.
- * - The user could do the 'define as 1', but it's best to keep it simple (for him/her)
- * - The #undef is just to avoid a compile warning...
+ * - It will redefine each protocol selection macro as '1' and check if there is more than one defined.
+ * - Although users could manually define it as '1', it's better to keep it simple for them.
+ * - The #undef is included to prevent potential compiler warnings.
  */
 
 #ifndef IRsmallD_ProtocolCheck_h
@@ -70,13 +70,12 @@
       + IR_SMALLD_SAMSUNG   \
       + IR_SMALLD_SAMSUNG32 )
 
-  //if IR_SMALLD_CHECSUM == 1 then it's OK (there's one and only one #define...)
-
   #if IR_SMALLD_CHECKSUM == 0
-      #error Protocol not defined or misspelled... Check IRsmallDecoder Library documentation
+      #error No protocol defined or misspelled. Check the IRsmallDecoder library documentation
   #elif IR_SMALLD_CHECKSUM > 1
-      #error Only one protocol is allowed... Check IRsmallDecoder Library documentation
+      #error Only one protocol can be defined. Check the IRsmallDecoder library documentation
   #endif  
 
+  // If no errors, then there's one and only one protocol macro defined (IR_SMALLD_CHECKSUM == 1)
 
 #endif

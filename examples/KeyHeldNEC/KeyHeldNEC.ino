@@ -7,24 +7,24 @@
  *  - Connect the IR receiver (see library documentation);
  *  - Upload the sketch and open the Serial Monitor;
  *  - "Teach the Arduino" which keys you want to use to increase or decrease a value: 
- *    point the NEC remote to the receiver and press any key of your choosing then press a different key;
- *  - Use the selected keys to increase/decrease the value, one unit at a time for each keypress,
+ *    point the NEC remote at the receiver and press any key of your choosing, then press a different key;
+ *  - Use the selected keys to increase or decrease the value, one unit at a time for each keypress,
  *    or, if you hold the key: 
- *      1 unit for each of the first 9 repeat codes; 
- *      5 units for each of the next 18 repeat codes;
+ *      1 unit for each of the first 9 repeat codes,
+ *      5 units for each of the next 18 repeat codes, and
  *      25 units for each of the subsequent repeat codes.
  *
- * In this example it's assumed that the IR receiver is connected to digital pin 2 and 
- * the pin is usable for external interrupts.
+ * In this example it's assumed that the IR receiver is connected to digital pin 2
+ * and that the pin supports external interrupts.
  * 
- * For more information on the boards' usable pins, see the library documentation at:
+ * For more information on the usable pins of each board, see the library documentation at:
  * https://github.com/LuisMiCa/IRsmallDecoder
- * or the README.pdf file in the extras folder of this library. 
+ * or read the README.pdf file in the extras folder of this library.
  */
 
 #define IR_SMALLD_NEC
 #include <IRsmallDecoder.h>
-IRsmallDecoder irDecoder(2);  //assuming that the IR receiver is connected to digital pin 2
+IRsmallDecoder irDecoder(2);  // Assuming that the IR receiver is connected to digital pin 2
 irSmallD_t irData;
 
 int value = 0;
@@ -36,7 +36,7 @@ void setup() {
   Serial.begin(115200);
 
   Serial.print("Press the \"UP\" key on the remote ");
-  while (!irDecoder.dataAvailable(irData)) ;  //waiting for one keypress
+  while (!irDecoder.dataAvailable(irData)) ;  // Waiting for one keypress
   keyInc = irData.cmd;
   Serial.print("(key cmd=");
   Serial.print(keyInc, HEX);
@@ -44,8 +44,8 @@ void setup() {
 
   Serial.print("Press the \"DOWN\" key on the remote ");
   do {
-    while (!irDecoder.dataAvailable(irData)) ;  //waiting for another keypress
-  } while (irData.cmd == keyInc);  //if it's the same key, go back and wait for another
+    while (!irDecoder.dataAvailable(irData)) ;  // Waiting for another keypress
+  } while (irData.cmd == keyInc);  // If it's the same key, go back and wait for another
   keyDec = irData.cmd;
   Serial.print("(key cmd=");
   Serial.print(keyDec, HEX);

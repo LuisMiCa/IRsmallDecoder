@@ -5,19 +5,19 @@
  *  
  * How to use this sketch: 
  *  - Connect the IR receiver (see library documentation);
- *  - Uncomment the #define for the desired protocol,
- *    (leave the others as comments, only one is allowed);
+ *  - Uncomment the #define for the desired protocol;
+ *    leave the others commented out (only one is allowed);
  *  - Upload the sketch and open the Serial Monitor;
  *  - "Teach the Arduino" which keys you want to use;
- *  - Hold the selected keys to turn on/off the built-in LED.
+ *  - Hold one of the selected keys to turn on/off the built-in LED.
  *    If you keep holding, it won't do anything else.
  *
  * In this example it's assumed that the board has a builtin LED and the IR receiver is 
  * connected to digital pin 2, which must be usable for external interrupts.
  * 
- * For more information on the boards' usable pins, see the library documentation at:
+ * For more information on the usable pins of each board, see the library documentation at:
  * https://github.com/LuisMiCa/IRsmallDecoder
- * or the README.pdf file in the extras folder of this library. 
+ * or read the README.pdf file in the extras folder of this library.
  */
 
 #define IR_SMALLD_NEC
@@ -29,7 +29,7 @@
 
 #include <IRsmallDecoder.h>
 
-IRsmallDecoder irDecoder(2);  //assuming that the IR receiver is connected to digital pin 2
+IRsmallDecoder irDecoder(2);  // Assuming that the IR receiver is connected to digital pin 2
 irSmallD_t irData;
 int keyOn, keyOff;
 bool keyReleased = true;
@@ -38,17 +38,17 @@ void setup() {
   pinMode(LED_BUILTIN, OUTPUT);
   Serial.begin(115200);
 
-  Serial.print("Press the key that will turn \"ON\" the LED ");
-  while (!irDecoder.dataAvailable(irData)) ;  //waiting for one keypress
+  Serial.print("Press the key that will turn the LED \"ON\" ");
+  while (!irDecoder.dataAvailable(irData)) ;  // Waiting for one keypress
   keyOn = irData.cmd;
   Serial.print("(key cmd=");
   Serial.print(keyOn, HEX);
   Serial.println(")");
 
-  Serial.print("Press the key that will turn \"OFF\" the LED ");
+  Serial.print("Press the key that will turn the LED \"OFF\" ");
   do {
-    while (!irDecoder.dataAvailable(irData)) ;  //waiting for another keypress
-  } while (irData.cmd == keyOn);  //if it's the same key, go back and wait for another
+    while (!irDecoder.dataAvailable(irData)) ;  // Waiting for another keypress
+  } while (irData.cmd == keyOn);  // If it's the same key, go back and wait for another
   keyOff = irData.cmd;
   Serial.print("(key cmd=");
   Serial.print(keyOff, HEX);

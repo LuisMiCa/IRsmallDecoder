@@ -1,4 +1,4 @@
-/* A simple example, using the IRsmallDecoder library, for testing remote controls
+/* A simple example using the IRsmallDecoder library for testing remote controls
  * that use the Sony SIRC12, SIRC15 or SIRC20 protocols. 
  *
  * Notes: 
@@ -9,22 +9,22 @@
  *  - IR_SMALLD_SIRC12 will receive signals from SIRC15 and SIRC20, but the codes will not be correct;
  *  - In a similar way, IR_SMALLD_SIRC15 will receive signals from SIRC20, but not from SIRC12.
  *	
- * In this example it's assumed that the IR receiver is connected to digital pin 2 and 
- * the pin is usable for external interrupts.
+ * In this example, it's assumed that the IR receiver is connected to digital pin 2,
+ * and that the pin supports external interrupts.
  * 
- * For more information on the boards' usable pins, see the library documentation at:
+ * For more information on the usable pins of each board, see the library documentation at:
  * https://github.com/LuisMiCa/IRsmallDecoder
- * or the README.pdf file in the extras folder of this library. 
+ * or read the README.pdf file in the extras folder of this library.
  */
 
 
-#define IR_SMALLD_SIRC12      //1st: define which protocol to use
-//#define IR_SMALLD_SIRC15    //     (only one of these 3);
+#define IR_SMALLD_SIRC12      // 1st: Define which protocol to use
+//#define IR_SMALLD_SIRC15    //      (only one of these three can be defined at a time);
 //#define IR_SMALLD_SIRC20
 
-#include <IRsmallDecoder.h>   //2nd: include the library;
-IRsmallDecoder irDecoder(2);  //3rd: create one decoder object with the correct digital pin;
-irSmallD_t irData;            //4th: declare one decoder data structure;
+#include <IRsmallDecoder.h>   // 2nd: Include the library;
+IRsmallDecoder irDecoder(2);  // 3rd: Create one decoder object with the correct digital pin;
+irSmallD_t irData;            // 4th: Declare a decoder data structure;
 
 void setup() {
   Serial.begin(115200);
@@ -41,8 +41,8 @@ void setup() {
 }
 
 void loop() {
-  if (irDecoder.dataAvailable(irData)) {  //5th: if the decoder has some new data available,
-    Serial.print(irData.addr, HEX);       //6th: do something with the data.
+  if (irDecoder.dataAvailable(irData)) {  // 5th: If the decoder has new data available,
+    Serial.print(irData.addr, HEX);       // 6th: do something with that data...
     Serial.print("   \t");
     #if defined(IR_SMALLD_SIRC12) || defined(IR_SMALLD_SIRC15)
       Serial.println(irData.cmd, HEX);

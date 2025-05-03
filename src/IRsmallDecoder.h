@@ -1,4 +1,4 @@
-/* IRsmallDecoder v1.2.1
+/* IRsmallDecoder v1.3.0
  *
  * This is an Arduino library for receiving and decoding infrared signals from remote controls.
  * It uses compact, fast, and reliable decoders that operate without relying on timers.

@@ -1,20 +1,30 @@
 IRsmallDecoder
 ==============
 
+v1.3.0 (2025-05-08)
+-------------------
+ * Added timeout reset mechanism for all decoders (issue #8)
+ * Added support for ESP32 and ESP8266 (issue #7)
+ * Added example sketch for ESP-based boards
+ * Adjusted NECx timing to reflect its address frame variability
+ * Changed examples' default serial baud rate to 115200
+ * Improved documentation and code comments
+
+
 v1.2.1 (2022-01-30)
 -------------------
  * Increased the NEC/NECx decoder tolerances (issue #6)
- * Added NEC protocol timing graphs to extras folder
+ * Added NEC protocol timing graphs to the extras folder
  * Improved the debugging features
 
 
 v1.2.0 (2022-01-16)
 -------------------
  * Added the dataAvailable() overload method
- * Added methods to enable/disable the decoder
- * Added an example for the enable/disable methods
+ * Added methods to enable and disable the decoder
+ * Added an example for the enable and disable methods
  * Fixed the possibility of needlessly dismissed codes (issue #5)
- * Improved the NEC/NECx and SIRC12/15 decoders (small improvement)
+ * Slightly improved the NEC/NECx and SIRC12/15 decoders
  * Improved some of the examples
  * Formatted the code in a more normalized way
  * Corrected and added code comments
@@ -26,7 +36,7 @@ v1.1.0 (2020-02-08)
  * Added SAMSUNG protocol (old standard)
  * Added SAMSUNG32 protocol
  * Added Samsung example sketch
- * Added support for ATtiny 24/44/84/25/45/85
+ * Added support for ATtiny24/44/84 and ATtiny25/45/85
 
 
 v1.0.0 (2020-01-24)
@@ -35,9 +45,9 @@ v1.0.0 (2020-01-24)
 
  Main features:
   * NEC, RC5 and SIRC protocols are supported
-  * IR Codes' data is separated
+  * IR code data is separated
   * Unwanted initial repetitions are ignored
-  * Held keys are signalized by a boolean variable
+  * Held keys are indicated by a boolean variable
   * Signal tolerances are very loose
   * SRAM and Flash memory usage is low
   * No timers required

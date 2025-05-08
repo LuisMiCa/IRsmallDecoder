@@ -2,6 +2,7 @@
 # Syntax Coloring Map for IRsmallDecoder
 #########################################
 
+
 #########################################
 # Datatypes (KEYWORD1)
 #########################################
@@ -20,7 +21,7 @@ enable	KEYWORD2
 
 
 #########################################
-# Constants (LITERAL1)
+# Protocol Selection (LITERAL1)
 #########################################
 
 IR_SMALLD_NEC	LITERAL1
@@ -32,3 +33,20 @@ IR_SMALLD_SIRC20	LITERAL1
 IR_SMALLD_SIRC	LITERAL1
 IR_SMALLD_SAMSUNG	LITERAL1
 IR_SMALLD_SAMSUNG32	LITERAL1
+
+
+#########################################
+# Feature Toggles (LITERAL1)
+#########################################
+
+IR_SMALLD_NO_TIMEOUT	LITERAL1
+
+
+#########################################
+# Debugging Flags (LITERAL1)
+#########################################
+
+IRSMALLD_DEBUG_STATE	LITERAL1
+IRSMALLD_DEBUG_INTERVAL	LITERAL1
+IRSMALLD_DEBUG_ISRTIME	LITERAL1
+IRSMALLD_DEBUG_ISRAVG	LITERAL1

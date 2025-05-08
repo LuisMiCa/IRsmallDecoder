@@ -1,17 +1,17 @@
 /* Toggle built-in LED with an IR remote control
  *
  * How to use this sketch: 
- *  - Uncomment the #define for the desired protocol,
- *    leave the others as comments (only one is allowed).
+ *  - Uncomment the #define for the desired protocol;
+ *    leave the others commented out (only one is allowed);
  *  - Upload to the Arduino board, connect the IR receiver and
- *  - press any key on the remote to toggle the builtin LED
+ *  - Press any key on the remote to toggle the built-in LED
  *
- * In this example it's assumed that the board has a builtin LED and the IR receiver is 
+ * In this example it's assumed that the board has a built-in LED and that the IR receiver is 
  * connected to digital pin 2, which must be usable for external interrupts.
  * 
- * For more information on the boards' usable pins, see the library documentation at:
+ * For more information on the usable pins of each board, see the library documentation at:
  * https://github.com/LuisMiCa/IRsmallDecoder
- * or the README.pdf file in the extras folder of this library. 
+ * or read the README.pdf file in the extras folder of this library.
  */
 
 #define IR_SMALLD_NEC
@@ -26,7 +26,7 @@
 
 #include <IRsmallDecoder.h>
 
-IRsmallDecoder irDecoder(2);  //assuming that the IR receiver is connected to digital pin 2
+IRsmallDecoder irDecoder(2);  // Assuming that the IR receiver is connected to digital pin 2
 int ledState = LOW;
 
 void setup() {
@@ -35,7 +35,7 @@ void setup() {
 
 void loop() {
   if (irDecoder.dataAvailable()) {
-    ledState = (ledState == LOW) ? HIGH : LOW;  //toggle with conditional operator
+    ledState = (ledState == LOW) ? HIGH : LOW;  // Toggle state with a conditional operator
     digitalWrite(LED_BUILTIN, ledState);
   }
 }

@@ -1,23 +1,23 @@
 /* Temporarily disable the decoder
  *  
- * This example is part of the the IRsmallDecoder library and is intended to demonstrate 
- * a possible usage for the enable and disable methods of the decoder.
+ * This example is part of the IRsmallDecoder library and is intended to demonstrate 
+ * a possible usage for the enable() and disable() methods of the decoder.
  *  
  * How to use this sketch: 
  *  - Connect the IR receiver (see library documentation);
- *  - Uncomment the #define for the desired protocol,
- *    (leave the others as comments, only one is allowed);
+ *  - Uncomment the #define for the desired protocol;
+ *    leave the others commented out (only one is allowed);
  *  - Upload the sketch and open the Serial Monitor;
  *  - "Teach the Arduino" which key you want to use to disable the decoder;
  *  - The selected key will temporarily disable the decoder;
- *  - Any other key on the remote will toggle the builtin LED;
+ *  - Any other key on the remote will toggle the built-in LED;
  *
- * In this example it's assumed that the board has a builtin LED and the IR receiver is 
+ * In this example, it's assumed that the board has a built-in LED and the IR receiver is 
  * connected to digital pin 2, which must be usable for external interrupts.
  * 
- * For more information on the boards' usable pins, see the library documentation at:
+ * For more information on the usable pins of each board, see the library documentation at:
  * https://github.com/LuisMiCa/IRsmallDecoder
- * or the README.pdf file in the extras folder of this library. 
+ * or read the README.pdf file in the extras folder of this library.
  */
 
 #define IR_SMALLD_NEC
@@ -33,7 +33,7 @@
 #include <IRsmallDecoder.h>
 #define TIMEOUT 8
 
-IRsmallDecoder irDecoder(2);  //assuming that the IR receiver is connected to digital pin 2
+IRsmallDecoder irDecoder(2);  // Assuming that the IR receiver is connected to digital pin 2
 irSmallD_t irData;
 int ledState = LOW;
 int keyDisable;
@@ -43,14 +43,14 @@ unsigned long currentMillis;
 
 void setup() {
   pinMode(LED_BUILTIN, OUTPUT);
-  Serial.begin(250000);
+  Serial.begin(115200);
   Serial.println("Press the remote key that will temporarily disable the IR decoder.");
-  while (!irDecoder.dataAvailable(irData)) ;  //waiting for one keypress
+  while (!irDecoder.dataAvailable(irData)) ;  // Waiting for one keypress
   keyDisable = irData.cmd;
   Serial.print("(Key Cmd=");
   Serial.print(keyDisable, HEX);
   Serial.println(")");
-  Serial.println("When the decoder is enabled, any other key will toggle the onboard LED.");
+  Serial.println("When the decoder is enabled, any other key will toggle the built-in LED.");
 }
 
 void loop() {
